@@ -1,10 +1,12 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Primitives;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Users;
+using Toolkit_API.Middleware.Exceptions;
 
 namespace Toolkit_API.Infrastructure.Repositories
 {
@@ -19,43 +21,43 @@ namespace Toolkit_API.Infrastructure.Repositories
         }
         public async Task<Users> GetUser(string username)
         {
-            string sqlQuery = "Select * From Users Where username = @Username";
-            try
-            {
+            string sqlQuery = "Select id From Users Where username = @Username";
+            
                 using (var conn = new SqlConnection(_connectionString))
                 {
                     var user = await conn.QueryFirstOrDefaultAsync<Users>(sqlQuery, new {Username = username});
-
-                    if (user != null) return user;
-
-                    return null;
+                    return user;
                 }
-            }
-            catch(Exception ex)
-            {
-                return null;
-            }
+            
+            
 
         }
-        public async Task <UserSession> CreateUser(string username,string email, string password)
+        public async Task<UserSession> Login(string username, byte[] passwordHash, byte[] passwordSalt)
+        {
+            string sqlQuery = "Select Count(1) From Users where (username = @Username and passwordHash = @PasswordHash and passwordSalt = @PasswordSalt)";
+
+            using(var conn = new SqlConnection(_connectionString))
+            {
+                var response = await conn.QueryFirstAsync<UserSession>(sqlQuery, new 
+                {
+                    Username = username,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt
+                
+                });
+                return response;
+            }
+                     
+        }
+        public async Task <Users> CreateUser(string username,string email, byte[] passwordHash, byte[] passwordSalt)
         {
 
             string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,email) values (@Username,@PasswordSalt,@PasswordHash,@Email)";
-
-            byte[] passwordSalt;
-
-            var passwordHash = _passwordHasher.HashPassword(password, out passwordSalt);
-
-            //var users = await GetUser(username);
-
-            try
-            {
+           
                 using (var conn = new SqlConnection(_connectionString))
                 {
-                    var response = await conn.ExecuteAsync(sqlQuery, new
+                    var response = await conn.ExecuteScalarAsync<Users>(sqlQuery, new
                     {
-
-                        Id = 1,
                         Username = username,
                         PasswordHash = passwordHash,
                         PasswordSalt = passwordSalt,
@@ -63,29 +65,15 @@ namespace Toolkit_API.Infrastructure.Repositories
 
                     });
 
-                    if(response != 0 || response != null) return new UserSession(username);
+                    return response;
                 }
-
                 
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message + ex.Source);
-                return null;
-            }
-            
-           
-
-            return null;
         }
         public async Task <string> TestConnection()
         {
             using(var conn = new SqlConnection(_connectionString))
             {
                 var response = await conn.QueryAsync("Select * from Users");
-
-                if(response == null) return "";
 
                 return response.ToString();
             }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
+using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.DTOs.UserDTOs;
 
@@ -10,17 +11,19 @@ namespace Toolkit_API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepo _userRepo;
+        private readonly CreateUser _createUser;
 
-        public UserController(IUserRepo userRepo)
+        public UserController(IUserRepo userRepo,CreateUser createUser)
         {
             _userRepo = userRepo;
+            _createUser = createUser;
         }
 
 
         [HttpPost("Create_User")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO userDTO)
         {
-            await _userRepo.CreateUser(userDTO.username,userDTO.email,userDTO.password);
+            await _createUser.Create(userDTO);
             return Ok($"User : {userDTO.username}, created");
         }
 

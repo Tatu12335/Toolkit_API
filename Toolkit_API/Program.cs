@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Application.Settings;
 using Toolkit_API.Infrastructure.Repositories;
@@ -39,6 +40,8 @@ builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
     new SqlUserRepo(sp.GetRequiredService<IPasswordHasher>(),connetionString)
 );
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<Login>();
+builder.Services.AddTransient<CreateUser>();
 
 
 /*builder.Configuration
@@ -47,7 +50,7 @@ builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
     .AddUserSecrets<Program>(optional: true)
     .AddEnvironmentVariables();*/
 
-var jwtKey = builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 builder.Services.AddTransient<IGenerateToken, TokenGenerator>();
 var app = builder.Build();
 

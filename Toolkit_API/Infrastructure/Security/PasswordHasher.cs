@@ -10,7 +10,7 @@ namespace Toolkit_API.Infrastructure.Security
         private const int iterations = 350000;
         private HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
 
-        // hashes the password using pbkdf2 And a salt, iterates 35 0000 times 
+        // hashes the password using pbkdf2 And a salt, iterates 350 000 times 
         public byte[] HashPassword(string password, out byte[] salt)
         {
             salt = RandomNumberGenerator.GetBytes(saltSize);
