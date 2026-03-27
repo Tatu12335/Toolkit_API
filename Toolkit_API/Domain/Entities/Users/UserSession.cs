@@ -8,6 +8,13 @@
         
         public string role { get; init; }
 
-        
+        public UserSession( string Username)
+        {
+            
+            username = Username;
+
+        }
+
+
     }
 }
