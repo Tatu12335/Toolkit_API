@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Toolkit_API.DTOs
+namespace Toolkit_API.DTOs.UserDTOs
 {
     public class CreateUserDTO
     {

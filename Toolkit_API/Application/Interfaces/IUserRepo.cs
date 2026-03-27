@@ -5,6 +5,6 @@ namespace Toolkit_API.Application.Interfaces
     public interface IUserRepo
     {
         public Task <UserSession> CreateUser(string username,string email, string password);
-        public Task<Users> GetUsers(string username);
+        public Task<Users> GetUser(string username);
     }
 }

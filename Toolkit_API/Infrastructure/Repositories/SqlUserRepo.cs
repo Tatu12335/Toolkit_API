@@ -10,12 +10,12 @@ namespace Toolkit_API.Infrastructure.Repositories
     {
         private readonly string _connectionString;
         private readonly IPasswordHasher _passwordHasher;
-        public SqlUserRepo(IPasswordHasher passwordHasher,IConfiguration configuration)
+        public SqlUserRepo(IPasswordHasher passwordHasher,string connectionString)
         {
             _passwordHasher = passwordHasher;
-            _connectionString = configuration.GetConnectionString("Default");
+            _connectionString = connectionString;
         }
-        public async Task<Users> GetUsers(string username)
+        public async Task<Users> GetUser(string username)
         {
             string sqlQuery = "Select * From Users Where username = @Username";
             try
@@ -44,13 +44,13 @@ namespace Toolkit_API.Infrastructure.Repositories
 
             var passwordHash = _passwordHasher.HashPassword(password, out passwordSalt);
 
-            var users = await GetUsers(username);
+            //var users = await GetUser(username);
 
             try
             {
                 using (var conn = new SqlConnection(_connectionString))
                 {
-                    await conn.ExecuteAsync(sqlQuery, new
+                    var response = await conn.ExecuteAsync(sqlQuery, new
                     {
                         Username = username,
                         Email = email,
@@ -58,6 +58,8 @@ namespace Toolkit_API.Infrastructure.Repositories
                         PasswordHash = passwordHash
 
                     });
+
+                    if(response != 0 || response != null) return new UserSession(username);
                 }
 
                 
@@ -67,7 +69,8 @@ namespace Toolkit_API.Infrastructure.Repositories
             {
                 return null;
             }
-            if (users != null) return new UserSession(users.id, users.username);
+            
+           
 
             return null;
         }

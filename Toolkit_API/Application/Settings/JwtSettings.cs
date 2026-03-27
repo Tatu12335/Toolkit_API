@@ -1,4 +1,6 @@
-﻿namespace Toolkit_API.Application.Settings
+﻿using Microsoft.Extensions.Options;
+
+namespace Toolkit_API.Application.Settings
 {
     public class JwtSettings
     {

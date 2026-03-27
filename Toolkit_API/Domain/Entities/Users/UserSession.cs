@@ -8,9 +8,9 @@
         
         public string role { get; init; }
 
-        public UserSession(int userId, string Username)
+        public UserSession( string Username)
         {
-            UserId = userId;
+            
             username = Username;
 
         }
