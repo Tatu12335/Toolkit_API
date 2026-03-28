@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
-using Toolkit_API.Application.Settings;
 using Toolkit_API.Infrastructure.Repositories;
 using Toolkit_API.Infrastructure.Security;
 using Toolkit_API.Infrastructure.Security.Jwt;
@@ -51,7 +50,11 @@ builder.Services.AddTransient<CreateUser>();
     .AddEnvironmentVariables();*/
 
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
-builder.Services.AddTransient<IGenerateToken, TokenGenerator>();
+
+builder.Services.AddTransient<IGenerateToken, TokenGenerator>(sp =>
+
+    new TokenGenerator(jwtKey)
+);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

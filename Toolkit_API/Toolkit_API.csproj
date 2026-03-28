@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Settings\" />
     <Folder Include="Infrastructure\Data\" />
     <Folder Include="Infrastructure\Services\" />
   </ItemGroup>

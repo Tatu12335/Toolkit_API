@@ -5,7 +5,6 @@ using System.IdentityModel.Tokens;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
 using Toolkit_API.Domain.Entities.Users;
-using Toolkit_API.Application.Settings;
 using Toolkit_API.Application.Interfaces;
 using Microsoft.Extensions.Options;
 
@@ -14,17 +13,17 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
 {
     public class TokenGenerator : IGenerateToken
     {
-        private readonly JwtSettings _settings;
+        private readonly string _jwtSecret;
 
-        public TokenGenerator(IOptions<JwtSettings> settings)
+        public TokenGenerator(string jwtSecret)
         {
-            _settings = settings.Value;
+            _jwtSecret = jwtSecret;
         }
 
         public string GenerateToken(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_settings.Key);
+            var key = Encoding.UTF8.GetBytes(_jwtSecret);
             
 
 
