@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Application.Settings;
 using Toolkit_API.Infrastructure.Repositories;
@@ -9,7 +10,7 @@ using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Middleware;
 
 
-// Time spent on the project : 5hrs
+// Time spent on the project : 6hrs
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
@@ -23,7 +24,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLogging( b =>
 {
     b.AddConsole();
-    b.SetMinimumLevel(LogLevel.Warning);
+    b.SetMinimumLevel(LogLevel.Debug);
 });
 
 builder.Services.AddCors(options =>
@@ -39,6 +40,8 @@ builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
     new SqlUserRepo(sp.GetRequiredService<IPasswordHasher>(),connetionString)
 );
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<Login>();
+builder.Services.AddTransient<CreateUser>();
 
 
 /*builder.Configuration
@@ -47,7 +50,7 @@ builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
     .AddUserSecrets<Program>(optional: true)
     .AddEnvironmentVariables();*/
 
-var jwtKey = builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 builder.Services.AddTransient<IGenerateToken, TokenGenerator>();
 var app = builder.Build();
 
