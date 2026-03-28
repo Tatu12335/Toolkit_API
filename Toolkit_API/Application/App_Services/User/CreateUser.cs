@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Toolkit_API.Application.Interfaces;
+﻿using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Users;
 using Toolkit_API.DTOs.UserDTOs;
 
