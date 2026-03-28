@@ -27,7 +27,7 @@ namespace Toolkit_API.Infrastructure.Security
         public bool VerifyPassword(string password, byte[] hash, byte[] salt)
         {
             var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(
-                    password,
+                    Encoding.UTF8.GetBytes(password),
                     salt,
                     iterations,
                     hashAlgorithm,

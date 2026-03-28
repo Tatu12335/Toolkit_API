@@ -10,7 +10,7 @@ using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Middleware;
 
 
-// Time spent on the project : 5hrs
+// Time spent on the project : 6hrs
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLogging( b =>
 {
     b.AddConsole();
-    b.SetMinimumLevel(LogLevel.Warning);
+    b.SetMinimumLevel(LogLevel.Debug);
 });
 
 builder.Services.AddCors(options =>

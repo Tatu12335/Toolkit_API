@@ -21,7 +21,7 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
             _settings = settings.Value;
         }
 
-        public string GenerateToken(UserSession user)
+        public string GenerateToken(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_settings.Key);
@@ -30,7 +30,7 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier,user.id.ToString()),
                 
                 new Claim(ClaimTypes.Name,user.username)
 

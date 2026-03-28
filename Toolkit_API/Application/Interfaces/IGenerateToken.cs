@@ -4,7 +4,7 @@ namespace Toolkit_API.Application.Interfaces
 {
     public interface IGenerateToken
     {
-        public string GenerateToken(UserSession user);
+        public string GenerateToken(Users user);
         
 
     }

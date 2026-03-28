@@ -23,6 +23,7 @@ namespace Toolkit_API.Controllers
         [HttpPost("Create_User")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO userDTO)
         {
+            
             await _createUser.Create(userDTO);
             return Ok($"User : {userDTO.username}, created");
         }

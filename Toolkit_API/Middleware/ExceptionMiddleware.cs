@@ -20,7 +20,7 @@ namespace Toolkit_API.Middleware
             }
             catch (AppException apex)
             {
-                _logger.LogWarning(apex.Message);
+                _logger.LogWarning(apex.Message + apex.StackTrace);
                 context.Response.StatusCode = apex.StatusCode;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new
@@ -31,12 +31,12 @@ namespace Toolkit_API.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex.Message);
+                _logger.LogWarning(ex.Message + ex.StackTrace);
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new
                 {
-                    message = "Internal server error "
+                    message = "Internal server error " + ex.Message + ex.StackTrace
                 });
                 
             }

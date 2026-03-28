@@ -21,7 +21,7 @@ namespace Toolkit_API.Infrastructure.Repositories
         }
         public async Task<Users> GetUser(string username)
         {
-            string sqlQuery = "Select id From Users Where username = @Username";
+            string sqlQuery = "Select * From Users Where username = @Username";
             
                 using (var conn = new SqlConnection(_connectionString))
                 {
@@ -32,13 +32,13 @@ namespace Toolkit_API.Infrastructure.Repositories
             
 
         }
-        public async Task<UserSession> Login(string username, byte[] passwordHash, byte[] passwordSalt)
+        public async Task<Users> Login(string username, byte[] passwordHash, byte[] passwordSalt)
         {
             string sqlQuery = "Select Count(1) From Users where (username = @Username and passwordHash = @PasswordHash and passwordSalt = @PasswordSalt)";
 
             using(var conn = new SqlConnection(_connectionString))
             {
-                var response = await conn.QueryFirstAsync<UserSession>(sqlQuery, new 
+                var response = await conn.QueryFirstAsync<Users>(sqlQuery, new 
                 {
                     Username = username,
                     PasswordHash = passwordHash,
@@ -52,7 +52,7 @@ namespace Toolkit_API.Infrastructure.Repositories
         public async Task <Users> CreateUser(string username,string email, byte[] passwordHash, byte[] passwordSalt)
         {
 
-            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,email) values (@Username,@PasswordSalt,@PasswordHash,@Email)";
+            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail) values (@Username,@PasswordSalt,@PasswordHash,@Email)";
            
                 using (var conn = new SqlConnection(_connectionString))
                 {
@@ -67,7 +67,7 @@ namespace Toolkit_API.Infrastructure.Repositories
 
                     return response;
                 }
-                
+               
         }
         public async Task <string> TestConnection()
         {
