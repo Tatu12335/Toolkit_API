@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Auth;
 using Toolkit_API.DTOs.UserDTOs;
@@ -20,10 +21,13 @@ namespace Toolkit_API.Application.App_Services.User
         public async Task<string> LoginMethod(LoginDTO loginDTO)
         {
             var user = await _userRepo.GetUser(loginDTO.username);
-            if(user == null)
-                throw new UnauthorizedAccessException();         
+            
+            if (user == null)
+                throw new UnauthorizedAccessException();
+       
+            var isValid = _passwordHasher.VerifyPassword(loginDTO.password, user.passwordHash, user.passwordSalt);        
 
-            if (!_passwordHasher.VerifyPassword(loginDTO.password, user.passwordHash, user.passwordSalt)) 
+            if (!isValid) 
                 throw new UnauthorizedAccessException();
 
             return _tokenGenerator.GenerateToken(user);

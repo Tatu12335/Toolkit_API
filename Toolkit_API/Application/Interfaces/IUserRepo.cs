@@ -8,6 +8,8 @@ namespace Toolkit_API.Application.Interfaces
         public Task<Users> GetUser(string username);
         public Task<string> TestConnection();
         public Task<Users> Login(string username, byte[] passwordHash, byte[] passwordSalt);
-        
+        public Task<bool> UserExists(string username);
+
+
     }
 }

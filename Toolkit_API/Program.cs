@@ -3,14 +3,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
-using Toolkit_API.Application.Settings;
 using Toolkit_API.Infrastructure.Repositories;
 using Toolkit_API.Infrastructure.Security;
 using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Middleware;
 
 
-// Time spent on the project : 6hrs
+// Time spent on the project : 7hrs
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
@@ -43,15 +42,12 @@ builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<Login>();
 builder.Services.AddTransient<CreateUser>();
 
-
-/*builder.Configuration
-    .AddJsonFile("appsettings.json", optional: false)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    .AddUserSecrets<Program>(optional: true)
-    .AddEnvironmentVariables();*/
-
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
-builder.Services.AddTransient<IGenerateToken, TokenGenerator>();
+
+builder.Services.AddTransient<IGenerateToken, TokenGenerator>(sp =>
+
+    new TokenGenerator(jwtKey)
+);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
