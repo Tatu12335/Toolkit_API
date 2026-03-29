@@ -1,6 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Infrastructure.Repositories;
@@ -20,7 +17,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddLogging( b =>
+builder.Services.AddLogging(b =>
 {
     b.AddConsole();
     b.SetMinimumLevel(LogLevel.Debug);
@@ -36,7 +33,7 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
-    new SqlUserRepo(sp.GetRequiredService<IPasswordHasher>(),connetionString)
+    new SqlUserRepo(sp.GetRequiredService<IPasswordHasher>(), connetionString)
 );
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<Login>();

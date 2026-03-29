@@ -8,8 +8,8 @@ namespace Toolkit_API.Application.App_Services.User
     {
         private readonly IUserRepo _userRepo;
         private readonly IPasswordHasher _passwordHasher;
-        public CreateUser(IUserRepo userRepo,IPasswordHasher passwordHasher) 
-        { 
+        public CreateUser(IUserRepo userRepo, IPasswordHasher passwordHasher)
+        {
             _userRepo = userRepo;
             _passwordHasher = passwordHasher;
         }
@@ -19,13 +19,13 @@ namespace Toolkit_API.Application.App_Services.User
             var passwordHash = _passwordHasher.HashPassword(createUserDTO.password, out saltBytes);
 
             var user = await _userRepo.UserExists(createUserDTO.username);
-                
-            if (user) 
-               throw new Exception("User already exists");
-          
-           var userSession = await _userRepo.CreateUser(createUserDTO.username, createUserDTO.email, passwordHash, saltBytes);        
-            
-            if (userSession == null) 
+
+            if (user)
+                throw new Exception("User already exists");
+
+            var userSession = await _userRepo.CreateUser(createUserDTO.username, createUserDTO.email, passwordHash, saltBytes);
+
+            if (userSession == null)
                 throw new Exception("Failed to create user");
 
             return userSession;

@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Toolkit_API.Application.Interfaces;
-using Toolkit_API.Domain.Entities.Users;
 
 
 
@@ -37,7 +35,7 @@ namespace Toolkit_API.Infrastructure.Security
                     hashAlgorithm,
                     saltSize
             );
-           
+
             // Used fixed time comparison to prevent timing attacks
             return CryptographicOperations.FixedTimeEquals(hashToCompare, hash);
         }

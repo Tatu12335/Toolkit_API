@@ -1,6 +1,4 @@
-﻿using Toolkit_API.Domain.Entities.Users;
-
-class Program
+﻿class Program
 {
     static async Task Main(string[] args)
     {
@@ -8,7 +6,7 @@ class Program
         {
             using (var conn = new HttpClient())
             {
-                var content = 
+                var content =
 
                 await conn.PostAsync("https://localhost:7023/User/Create_User");
             }

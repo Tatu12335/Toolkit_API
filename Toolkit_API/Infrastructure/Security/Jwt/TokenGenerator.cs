@@ -1,12 +1,9 @@
-﻿using System.Security.Claims;
-using System.Text;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.IdentityModel.Tokens;
-using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using Toolkit_API.Domain.Entities.Users;
+using System.Security.Claims;
+using System.Text;
 using Toolkit_API.Application.Interfaces;
-using Microsoft.Extensions.Options;
+using Toolkit_API.Domain.Entities.Users;
 
 
 namespace Toolkit_API.Infrastructure.Security.Jwt
@@ -24,13 +21,13 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtSecret);
-            
+
 
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,user.id.ToString()),
-                
+
                 new Claim(ClaimTypes.Name,user.username)
 
             };

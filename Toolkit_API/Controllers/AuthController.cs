@@ -10,13 +10,13 @@ namespace Toolkit_API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly Login _login;
-        public AuthController(Login login) 
-        { 
+        public AuthController(Login login)
+        {
             _login = login;
         }
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody]LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var result = await _login.LoginMethod(loginDTO);
             return Ok(result);

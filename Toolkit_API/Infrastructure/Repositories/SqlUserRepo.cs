@@ -1,20 +1,15 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Primitives;
-using System.Diagnostics;
-using System.Linq.Expressions;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Users;
-using Toolkit_API.Middleware.Exceptions;
 
 namespace Toolkit_API.Infrastructure.Repositories
 {
-    public class SqlUserRepo : IUserRepo 
+    public class SqlUserRepo : IUserRepo
     {
         private readonly string _connectionString;
         private readonly IPasswordHasher _passwordHasher;
-        public SqlUserRepo(IPasswordHasher passwordHasher,string connectionString)
+        public SqlUserRepo(IPasswordHasher passwordHasher, string connectionString)
         {
             _passwordHasher = passwordHasher;
             _connectionString = connectionString;
@@ -22,58 +17,59 @@ namespace Toolkit_API.Infrastructure.Repositories
         public async Task<Users> GetUser(string username)
         {
             string sqlQuery = "Select * From Users Where username = @Username";
-            
-                using (var conn = new SqlConnection(_connectionString))
-                {
-                    var user = await conn.QueryFirstOrDefaultAsync<Users>(sqlQuery, new {Username = username});
-                    return user;
-                }
-            
-            
 
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var user = await conn.QuerySingleAsync<Users>(sqlQuery, new { Username = username });
+                return user;
+            }
         }
         public async Task<Users> Login(string username, byte[] passwordHash, byte[] passwordSalt)
         {
-            string sqlQuery = "Select Count(1) From Users where (username = @Username and passwordHash = @PasswordHash and passwordSalt = @PasswordSalt)";
+            string sqlQuery = "Select * From Users where username = @Username and passwordHash = @PasswordHash and passwordSalt = @PasswordSalt";
 
-            using(var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(_connectionString))
             {
-                var response = await conn.QueryFirstAsync<Users>(sqlQuery, new 
+                var response = await conn.QueryFirstOrDefaultAsync<Users>(sqlQuery, new
                 {
                     Username = username,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt
-                
+
                 });
                 return response;
             }
-                     
         }
-        public async Task <Users> CreateUser(string username,string email, byte[] passwordHash, byte[] passwordSalt)
+
+        public async Task<Users> CreateUser(string username, string email, byte[] passwordHash, byte[] passwordSalt)
         {
             // Note to me : Output Inserted.* is used to return the inserted record after the insert operation is performed.
-            // This allows you to retrieve the newly created user's details, including any auto-generated fields like the user ID,
-            // without needing to execute a separate query to fetch the data. It's a convenient way to get the complete user information immediately after creation.
 
-            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail) OUTPUT INSERTED.* values (@Username,@PasswordSalt,@PasswordHash,@Email)";
-           
-                using (var conn = new SqlConnection(_connectionString))
+            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail) OUTPUT INSERTED.* values (@Username,@PasswordHash,@PasswordSalt,@Email)";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var response = await conn.QuerySingleAsync<Users>(sqlQuery, new
                 {
-                    var response = await conn.QuerySingleAsync<Users>(sqlQuery, new
-                    {
-                        Username = username,
-                        PasswordHash = passwordHash,
-                        PasswordSalt = passwordSalt,
-                        Email = email,
+                    Username = username,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                    Email = email,
 
-                    });
+                });
 
+                return response;
+            }
+
+<<<<<<< HEAD
+=======
                     return response;
                 }
                
                 
+>>>>>>> 246ee978b81f42224a20454d8892c639a8ea1bb5
         }
-        public async Task <bool> UserExists(string username)
+        public async Task<bool> UserExists(string username)
         {
             string sqlQuery = "Select Count(1) From Users where username = @Username";
             using (var conn = new SqlConnection(_connectionString))
@@ -82,9 +78,9 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return response;
             }
         }
-        public async Task <string> TestConnection()
+        public async Task<string> TestConnection()
         {
-            using(var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(_connectionString))
             {
                 var response = await conn.QueryAsync("Select * from Users");
 

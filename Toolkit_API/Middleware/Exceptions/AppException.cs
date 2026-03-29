@@ -1,12 +1,10 @@
-﻿using System.Globalization;
-
-namespace Toolkit_API.Middleware.Exceptions
+﻿namespace Toolkit_API.Middleware.Exceptions
 {
     public class AppException : Exception
     {
         public int StatusCode { get; }
 
-        public AppException(string message,int statusCode = 400)
+        public AppException(string message, int statusCode = 400)
             : base(message)
         {
             StatusCode = statusCode;

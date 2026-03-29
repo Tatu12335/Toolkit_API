@@ -4,7 +4,7 @@ namespace Toolkit_API.Middleware
 {
     public class ExceptionMiddleware
     {
-        private readonly ILogger <ExceptionMiddleware> _logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
         private readonly RequestDelegate _requestDelegate;
         public ExceptionMiddleware(RequestDelegate requestDelegate, ILogger<ExceptionMiddleware> logger)
         {
@@ -13,7 +13,7 @@ namespace Toolkit_API.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            
+
             try
             {
                 await _requestDelegate(context);
@@ -27,7 +27,7 @@ namespace Toolkit_API.Middleware
                 {
                     message = apex.Message
                 });
-                
+
             }
             catch (Exception ex)
             {
@@ -38,7 +38,7 @@ namespace Toolkit_API.Middleware
                 {
                     message = "Internal server error " + ex.Message + ex.StackTrace
                 });
-                
+
             }
         }
     }
