@@ -9,7 +9,7 @@ using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Middleware;
 
 
-// Time spent on the project : 6hrs
+// Time spent on the project : 7hrs
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
@@ -41,13 +41,6 @@ builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<Login>();
 builder.Services.AddTransient<CreateUser>();
-
-
-/*builder.Configuration
-    .AddJsonFile("appsettings.json", optional: false)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    .AddUserSecrets<Program>(optional: true)
-    .AddEnvironmentVariables();*/
 
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 

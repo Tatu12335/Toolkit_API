@@ -21,16 +21,11 @@ namespace Toolkit_API.Application.App_Services.User
         public async Task<string> LoginMethod(LoginDTO loginDTO)
         {
             var user = await _userRepo.GetUser(loginDTO.username);
+            
             if (user == null)
                 throw new UnauthorizedAccessException();
-            var hash = _passwordHasher.HashPassword(loginDTO.password, out byte[] salt);
-            user.passwordSalt = salt;
-            user.passwordHash = hash;
-
-
-            var isValid = _passwordHasher.VerifyPassword(loginDTO.password, user.passwordHash, user.passwordSalt);
-
-            
+       
+            var isValid = _passwordHasher.VerifyPassword(loginDTO.password, user.passwordHash, user.passwordSalt);        
 
             if (!isValid) 
                 throw new UnauthorizedAccessException();

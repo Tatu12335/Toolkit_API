@@ -51,12 +51,15 @@ namespace Toolkit_API.Infrastructure.Repositories
         }
         public async Task <Users> CreateUser(string username,string email, byte[] passwordHash, byte[] passwordSalt)
         {
+            // Note to me : Output Inserted.* is used to return the inserted record after the insert operation is performed.
+            // This allows you to retrieve the newly created user's details, including any auto-generated fields like the user ID,
+            // without needing to execute a separate query to fetch the data. It's a convenient way to get the complete user information immediately after creation.
 
-            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail) values (@Username,@PasswordSalt,@PasswordHash,@Email)";
+            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail) OUTPUT INSERTED.* values (@Username,@PasswordSalt,@PasswordHash,@Email)";
            
                 using (var conn = new SqlConnection(_connectionString))
                 {
-                    var response = await conn.ExecuteScalarAsync<Users>(sqlQuery, new
+                    var response = await conn.QuerySingleAsync<Users>(sqlQuery, new
                     {
                         Username = username,
                         PasswordHash = passwordHash,
@@ -68,6 +71,15 @@ namespace Toolkit_API.Infrastructure.Repositories
                     return response;
                 }
                
+        }
+        public async Task <bool> UserExists(string username)
+        {
+            string sqlQuery = "Select Count(1) From Users where username = @Username";
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var response = await conn.QueryFirstAsync<bool>(sqlQuery, new { Username = username });
+                return response;
+            }
         }
         public async Task <string> TestConnection()
         {

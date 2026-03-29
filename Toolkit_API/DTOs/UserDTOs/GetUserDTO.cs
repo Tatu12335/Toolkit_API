@@ -5,6 +5,6 @@ namespace Toolkit_API.DTOs.UserDTOs
     public class GetUserDTO
     {
         [Required]
-        public string username { get; set; } = string.Empty;
+        public string username { get; set; }
     }
 }
