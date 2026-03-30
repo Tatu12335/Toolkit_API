@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.DTOs.UserDTOs;
 
 namespace Toolkit_API.Controllers
 {
+    [EnableRateLimiting("fixed")]
     [ApiController]
     [Route("/")]
     public class UserController : ControllerBase
@@ -22,11 +26,11 @@ namespace Toolkit_API.Controllers
         [HttpPost("Create_User")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO userDTO)
         {
-
+            
             await _createUser.Create(userDTO);
             return Ok($"User : {userDTO.username}, created");
         }
-
+        [Authorize]
         [HttpGet("Get_Users")]
         public async Task<IActionResult> GetUserAsync([FromHeader] GetUserDTO userDTO)
         {

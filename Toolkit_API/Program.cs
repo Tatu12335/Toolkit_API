@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.RateLimiting;
 using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Infrastructure.Repositories;
@@ -12,7 +17,41 @@ var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
 
 // Add services to the container.
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter(policyName: "Fixed", options =>
+    {
+        options.Window = TimeSpan.FromSeconds(10);
+        options.PermitLimit = 10;
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
+    });
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.User.Identity?.Name ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                Window = TimeSpan.FromSeconds(10),
+                PermitLimit = 5,
+            });
+    });
+    options.RejectionStatusCode = 429; // Too Many Requests
+});
 
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    { 
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
+        };
+    });
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -45,7 +84,12 @@ builder.Services.AddTransient<IGenerateToken, TokenGenerator>(sp =>
 
     new TokenGenerator(jwtKey)
 );
+
+
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseRateLimiter();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

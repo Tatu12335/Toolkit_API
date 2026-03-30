@@ -27,7 +27,7 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,user.id.ToString()),
-
+                new Claim(ClaimTypes.Role, user.roles),
                 new Claim(ClaimTypes.Name,user.username)
 
             };

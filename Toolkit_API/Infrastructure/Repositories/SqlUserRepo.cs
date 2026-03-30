@@ -60,8 +60,6 @@ namespace Toolkit_API.Infrastructure.Repositories
 
                 return response;
             }
-
-
         }
         public async Task<bool> UserExists(string username)
         {
