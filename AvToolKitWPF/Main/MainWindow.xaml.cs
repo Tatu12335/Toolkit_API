@@ -13,16 +13,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 
-namespace AvToolKitWPF.Views
+namespace AvToolKitWPF.Main
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Login : MetroWindow
+    public partial class MainWindow : MetroWindow
     {
-        public Login()
+        private readonly string _token;
+        public MainWindow(string token)
         {
             InitializeComponent();
+            _token = token;
+            
+
         }
     }
 }
