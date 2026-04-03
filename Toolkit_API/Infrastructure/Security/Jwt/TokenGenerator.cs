@@ -22,8 +22,6 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtSecret);
 
-
-
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,user.id.ToString()),
@@ -31,8 +29,6 @@ namespace Toolkit_API.Infrastructure.Security.Jwt
                 new Claim(ClaimTypes.Name,user.username)
 
             };
-
-
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
