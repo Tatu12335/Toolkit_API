@@ -23,7 +23,7 @@ namespace Toolkit_API.Application.App_Services.User
             if (user)
                 throw new Exception("User already exists");
 
-            var userSession = await _userRepo.CreateUser(createUserDTO.username, createUserDTO.email, passwordHash, saltBytes);
+            var userSession = await _userRepo.CreateUser(createUserDTO.username, createUserDTO.email, passwordHash, saltBytes,createUserDTO.role);
 
             if (userSession == null)
                 throw new Exception("Failed to create user");

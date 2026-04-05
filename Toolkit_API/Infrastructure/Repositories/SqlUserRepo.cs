@@ -41,11 +41,11 @@ namespace Toolkit_API.Infrastructure.Repositories
             }
         }
 
-        public async Task<Users> CreateUser(string username, string email, byte[] passwordHash, byte[] passwordSalt)
+        public async Task<Users> CreateUser(string username, string email, byte[] passwordHash, byte[] passwordSalt, string role)
         {
             // Note to me : Output Inserted.* is used to return the inserted record after the insert operation is performed.
 
-            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail) OUTPUT INSERTED.* values (@Username,@PasswordHash,@PasswordSalt,@Email)";
+            string sqlQuery = "Insert Into Users (username,passwordHash,passwordSalt,newemail,roles) OUTPUT INSERTED.* values (@Username,@PasswordHash,@PasswordSalt,@Email,@Roles)";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -55,6 +55,7 @@ namespace Toolkit_API.Infrastructure.Repositories
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     Email = email,
+                    Roles = role
 
                 });
 

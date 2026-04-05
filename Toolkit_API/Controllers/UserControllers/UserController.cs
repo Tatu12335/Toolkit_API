@@ -6,7 +6,7 @@ using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.DTOs.UserDTOs;
 
-namespace Toolkit_API.Controllers
+namespace Toolkit_API.Controllers.UserControllers
 {
     [EnableRateLimiting("Fixed")]
     [ApiController]

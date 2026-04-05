@@ -4,14 +4,16 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.RateLimiting;
 using Toolkit_API.Application.App_Services.User;
+using Toolkit_API.Application.Application_Services.Operations;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Infrastructure.Repositories;
 using Toolkit_API.Infrastructure.Security;
 using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Middleware;
+using Toolkit_API.Infrastructure.Services;
 
 
-// Time spent on the project : 9hrs
+// Time spent on the project : 10hrs
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
@@ -77,7 +79,13 @@ builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<Login>();
 builder.Services.AddTransient<CreateUser>();
-
+builder.Services.AddTransient<FileHasher>();
+builder.Services.AddTransient<IFileScanRepo,FileScanRepo>(sp =>
+    new FileScanRepo(sp.GetRequiredService<FileHasher>(),connetionString)
+);
+builder.Services.AddTransient<FileScanOps>(sp =>
+    new FileScanOps(sp.GetRequiredService<IFileScanRepo>())
+);
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 
 builder.Services.AddTransient<IGenerateToken, TokenGenerator>(sp =>
