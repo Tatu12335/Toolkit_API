@@ -10,12 +10,16 @@ namespace Toolkit_API.Application.Application_Services.Operations
     public class FileScanOps
     {
         private readonly IFileScanRepo _repository;
-        public FileScanOps(IFileScanRepo repository)
+        private readonly ICallExternalAPI _externalAPI;
+        private readonly HandleResult _handleResult;
+        public FileScanOps(IFileScanRepo repository, ICallExternalAPI externalAPI, HandleResult handleResult)
         {
             _repository = repository;
+            _externalAPI = externalAPI;
+            _handleResult = handleResult;
         }
 
-        public async Task ScanFile(string filePath,int userId)
+        public async Task<string> ScanFile(string filePath,int userId)
         {
             if (filePath == null)
                 throw new ArgumentNullException();
@@ -23,9 +27,10 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 throw new FileNotFoundException();
             
 
-            await _repository.ScanFile(filePath,userId);
-            
-
+            var hash = await _repository.ScanFile(filePath,userId);
+            var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
+            var handled = await _handleResult.HandleAsync(result);
+            return handled;
         }
 
 

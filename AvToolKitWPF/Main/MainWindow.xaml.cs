@@ -56,9 +56,9 @@ namespace AvToolKitWPF.Main
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
                     var response = await client.PostAsync("https://localhost:7023/FileOps/Scan",content);
-                    
-                    if(response.IsSuccessStatusCode)
-                        MessageBox.Show(filePath + " scanned successfully!", "Scan Successful", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                        ListBoxResults.Items.Add($"Scan successful: {responseContent}");
                 }
             }
             catch (HttpIOException ioex)

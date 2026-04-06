@@ -22,8 +22,8 @@ namespace Toolkit_API.Controllers.ScanControllers
         public async Task<IActionResult> ScanFile([FromBody] FileScanDTO scanDTO)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            await _fileScanOps.ScanFile(scanDTO.filePath,userId);
-            return Ok();
+            var result = await _fileScanOps.ScanFile(scanDTO.filePath,userId);
+            return Ok(result);
 
         }
     }

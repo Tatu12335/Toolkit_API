@@ -11,9 +11,10 @@ using Toolkit_API.Infrastructure.Security;
 using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Middleware;
 using Toolkit_API.Infrastructure.Services;
+using Toolkit_API.Infrastructure;
 
 
-// Time spent on the project : 10hrs
+// Time spent on the project : 11hrs
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
@@ -84,7 +85,7 @@ builder.Services.AddTransient<IFileScanRepo,FileScanRepo>(sp =>
     new FileScanRepo(sp.GetRequiredService<FileHasher>(),connetionString)
 );
 builder.Services.AddTransient<FileScanOps>(sp =>
-    new FileScanOps(sp.GetRequiredService<IFileScanRepo>())
+    new FileScanOps(sp.GetRequiredService<IFileScanRepo>(),sp.GetRequiredService<ICallExternalAPI>(), sp.GetRequiredService<HandleResult>())
 );
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 
@@ -92,7 +93,8 @@ builder.Services.AddTransient<IGenerateToken, TokenGenerator>(sp =>
 
     new TokenGenerator(jwtKey)
 );
-
+builder.Services.AddHttpClient<ICallExternalAPI, ExternalCalls>();
+builder.Services.AddTransient<HandleResult>();
 
 var app = builder.Build();
 app.UseRateLimiter();
