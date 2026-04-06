@@ -25,15 +25,14 @@ namespace Toolkit_API.Infrastructure.Repositories
             
             using (var conn = new SqlConnection(_connetionString))
             {
-                var file = await conn.ExecuteAsync("Insert Into ScanLog (FileName, FileHash, userId) values (@FileName, @FileHash, @UserId)", new
+                var file = await conn.ExecuteAsync("Insert Into ScanLog (FileName, FileHash, userId,detectionStatus) values (@FileName, @FileHash, @UserId)", new
                 {
                     FileName = fileInfo.Name,
                     FileHash = hash,
-                    UserId = userId
+                    UserId = userId,
                 });
-                
-                
-                
+           
+
             }
         }
     }
