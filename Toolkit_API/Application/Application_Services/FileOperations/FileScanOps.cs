@@ -31,6 +31,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
             var handled = await _handleResult.HandleAsync(result);
             return handled;
+            
         }
 
 
