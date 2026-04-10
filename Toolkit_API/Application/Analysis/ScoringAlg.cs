@@ -23,7 +23,7 @@ namespace Toolkit_API.Application.Analysis
         {
 
             var extensionMatches = await _fileAnalysis.ExtensionMatches(filepath);
-            var suspiciousPatterns = await _fileAnalysis.CheckForSuspiciousPatterns(filepath, fileAnalysisResult);
+            var suspiciousPatterns = await _fileAnalysis.CheckForSuspiciousPatterns(filepath, fileAnalysisResult, new ExtractedStrings());
             
 
 

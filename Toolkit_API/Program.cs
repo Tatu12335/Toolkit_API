@@ -12,6 +12,7 @@ using Toolkit_API.Infrastructure.Security;
 using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Infrastructure.Services;
 using Toolkit_API.Middleware;
+using Toolkit_API.Domain.Entities.FileAnalysis;
 
 
 // Time spent on the project : 11hrs
@@ -99,7 +100,8 @@ builder.Services.AddHttpClient<ICallExternalAPI, ExternalCalls>();
 builder.Services.AddTransient<HandleResult>();
 
 builder.Services.AddTransient<IFileAnalysis,FileAnalysis>();
-builder.Services.AddTransient<ScoringAlg>(sp=> new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(),0));
+builder.Services.AddTransient<ExtractedStrings>();
+builder.Services.AddTransient<ScoringAlg>(sp=> new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(),sp.GetRequiredService<HandleResult>(),0));
 builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(),sp.GetRequiredService<ScoringAlg>()));
 
 
