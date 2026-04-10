@@ -7,6 +7,6 @@ namespace Toolkit_API.Application.Interfaces
         public byte[] DetermineMagicBytes(byte[] bytes);
         public Task<string> AnalyzeFile(string filePath);
         public Task<bool> ExtensionMatches(string filepath);
-        public Task<bool> CheckForSuspiciousPatterns(string filePath, FileAnalysisResult fileAnalysisResult);
+        public Task<bool> CheckForSuspiciousPatterns(string filePath, FileAnalysisResult fileAnalysisResult, ExtractedStrings extractedStrings);
     }
 }

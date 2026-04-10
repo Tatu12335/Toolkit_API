@@ -47,11 +47,11 @@ namespace Toolkit_API.Infrastructure.Services
                 throw new FileNotFoundException($"File not found: {filepath}");
             }
         }
-        public async Task<bool> CheckForSuspiciousPatterns(string filePath,FileAnalysisResult fileAnalysisResult)
+        public async Task<bool> CheckForSuspiciousPatterns(string filePath,FileAnalysisResult fileAnalysisResult,ExtractedStrings extractedStrings)
         {
             
             var bytes = await File.ReadAllBytesAsync(filePath);
-            var extractedStrings = new ExtractedStrings();
+            
             foreach (var pattern in extractedStrings.Patterns)
             {
                 if (bytes.AsSpan().IndexOf(pattern) >= 0)
