@@ -5,7 +5,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
 {
     public class HandleResult
     {
-        private readonly I
+        
         public HandleResult() { }
         public async Task<string> HandleAsync(Response response, FileAnalysisResult analysisResult)
         {

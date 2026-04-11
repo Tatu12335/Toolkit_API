@@ -9,10 +9,12 @@ namespace AvToolKitWPF.Main
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// NOTE : didn't do mvvm for this one, since it's a simple app and I wanted to focus on the api calls and the file scanning logic, but in a real application I would definitely use mvvm for better separation of concerns and maintainability.
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
         private readonly string _token;
+        
         public MainWindow(string token)
         {
             InitializeComponent();
@@ -38,14 +40,20 @@ namespace AvToolKitWPF.Main
             {
                 using (var client = new HttpClient())
                 {
-                    var json = JsonConvert.SerializeObject(new { filePath });
+                    var json = JsonConvert.SerializeObject(new { filePath, detectionStatus = "pending" });
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
                     var response = await client.PostAsync("https://localhost:7023/FileOps/Scan", content);
                     var analyzeResponse = await client.PostAsync("https://localhost:7023/FileOps/Analysis/Analyze", content);
+                    
+                    if(!analyzeResponse.IsSuccessStatusCode)
+                    {
+                        var analyzeContent = await analyzeResponse.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Analysis failed: {analyzeContent}", "Analysis Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
                     var responseContent = await response.Content.ReadAsStringAsync();
                     
                     if (!response.IsSuccessStatusCode)
@@ -54,7 +62,7 @@ namespace AvToolKitWPF.Main
                         return;
                     }
 
-                    if (response.IsSuccessStatusCode)
+                    
                         ListBoxResults.Items.Add($"Scan successful: {responseContent}");
                 }
             }

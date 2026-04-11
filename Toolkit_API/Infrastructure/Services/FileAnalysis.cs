@@ -47,33 +47,17 @@ namespace Toolkit_API.Infrastructure.Services
                 throw new FileNotFoundException($"File not found: {filepath}");
             }
         }
-        public async Task<bool> CheckForSuspiciousPatterns(string filePath,FileAnalysisResult fileAnalysisResult)
+        public async Task<bool> CheckForSuspiciousPatterns(string filePath,FileAnalysisResult fileAnalysisResult,ExtractedStrings extractedStrings)
         {
-            var patterns = new List<byte[]>
-            {
-                // Common web and protocol patterns
-                new byte[] {0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F }, // Common URL pattern
-                new byte[] { 0x68, 0x74, 0x74, 0x70, 0x73, 0x3A, 0x2F, 0x2F }, // Common HTTPS URL pattern
-                new byte[] {0x55,0x73,0x65,0x72,0x2D,0x41,0x67,0x65,0x6E,0x74}, // "User-Agent" string
-                // Suspicious winAPI calls (common in malware)
-                new byte[] {0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x6D, 0x6F, 0x74, 0x65, 0x54, 0x68, 0x72, 0x65, 0x61, 0x64}, // "CreateRemoteThread" string
-                new byte[] { 0x57, 0x72, 0x69, 0x74, 0x65, 0x50, 0x72, 0x6F, 0x63, 0x65, 0x73, 0x73, 0x4D, 0x65, 0x6D, 0x6F, 0x72, 0x79 }, // "WriteProcessMemory" string
-                new byte[] { 0x56, 0x69, 0x72, 0x74, 0x75, 0x61, 0x6C, 0x41, 0x6C, 0x6C, 0x6F, 0x63, 0x45, 0x78 }, // "VirtualAllocEx" string
-                new byte[] { 0x53, 0x68, 0x65, 0x6C, 0x6C, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65 }, // "ShellExecute" string
-                // Common tool calls
-                new byte[] { 0x63, 0x6D, 0x64, 0x2E, 0x65, 0x78, 0x65 }, // "cmd.exe" string
-                new byte[] { 0x70, 0x77, 0x73, 0x68, 0x2E, 0x65, 0x78, 0x65 }, // "powershell.exe" string
-                new byte[] { 0x52, 0x65, 0x67, 0x2D, 0x64, 0x69, 0x74 }, // "Reg-edit" string
-                new byte[] { 0x76, 0x73, 0x73, 0x61, 0x64, 0x6D, 0x69, 0x6E } // "vssadmin" string
-            };
+            
             var bytes = await File.ReadAllBytesAsync(filePath);
             
-            foreach (var pattern in patterns)
+            foreach (var pattern in extractedStrings.Patterns)
             {
                 if (bytes.AsSpan().IndexOf(pattern) >= 0)
                 {
                     Debug.WriteLine($"Suspicious pattern found in file: {filePath}");
-                    fileAnalysisResult.Score += 10; // Increase score for each suspicious pattern found
+                     
                     return true;
                 }
             } return false;

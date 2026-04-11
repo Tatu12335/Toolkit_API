@@ -21,13 +21,19 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 throw new ArgumentNullException();
             if (!File.Exists(filePath))
                 throw new FileNotFoundException();
-            //var magicBytes = await _fileAnalysis.DetermineMagicBytes(await File.ReadAllBytesAsync(filePath));
+            
 
             var extension = Path.GetExtension(filePath);
 
             var analysisResult = await _fileAnalysis.AnalyzeFile(filePath);
 
-            var score = await _scoringAlg.CalculateScore(filePath);
+            var fileAnalysisResult = new FileAnalysisResult
+            {
+                FilePath = filePath,
+                AnalysisResult = analysisResult
+            };
+            
+            var score = await _scoringAlg.CalculateScore(filePath, fileAnalysisResult);
 
             
 
