@@ -6,5 +6,7 @@ namespace Toolkit_API.DTOs.UserDTOs
     {
         [Required]
         public string filePath { get; set; }
+        [Required]
+        public string detectionStatus { get; set; } = string.Empty;
     }
 }

@@ -32,7 +32,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 FilePath = filePath,
                 AnalysisResult = analysisResult
             };
-
+            
             var score = await _scoringAlg.CalculateScore(filePath, fileAnalysisResult);
 
             

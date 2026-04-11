@@ -57,7 +57,7 @@ namespace Toolkit_API.Infrastructure.Services
                 if (bytes.AsSpan().IndexOf(pattern) >= 0)
                 {
                     Debug.WriteLine($"Suspicious pattern found in file: {filePath}");
-                    //fileAnalysisResult.Score += 10; // Increase score for each suspicious pattern found
+                     
                     return true;
                 }
             } return false;
