@@ -22,7 +22,7 @@ namespace Toolkit_API.Controllers.ScanControllers
         public async Task<IActionResult> ScanFile([FromBody] FileScanDTO scanDTO)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var result = await _fileScanOps.ScanFile(scanDTO.filePath, userId,scanDTO.detectionStatus);
+            var result = await _fileScanOps.ScanFile(scanDTO.filePath, userId);
             return Ok(result);
 
         }

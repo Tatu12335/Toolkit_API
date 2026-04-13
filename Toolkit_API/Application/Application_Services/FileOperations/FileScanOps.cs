@@ -17,7 +17,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             
         }
 
-        public async Task<string> ScanFile(string filePath, int userId, string detectionStatus)
+        public async Task<string> ScanFile(string filePath, int userId)
         {
             if (filePath == null)
                 throw new ArgumentNullException();
@@ -25,7 +25,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 throw new FileNotFoundException();
 
 
-            var hash = await _repository.ScanFile(filePath, userId, detectionStatus);
+            var hash = await _repository.ScanFile(filePath, userId);
             var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
             var analysisResult = await _staticFileAnalysis.AnalyzeFileExtension(filePath);
             var handled = await _handleResult.HandleAsync(result,analysisResult);

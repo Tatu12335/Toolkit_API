@@ -40,7 +40,7 @@ namespace AvToolKitWPF.Main
             {
                 using (var client = new HttpClient())
                 {
-                    var json = JsonConvert.SerializeObject(new { filePath, detectionStatus = "pending" });
+                    var json = JsonConvert.SerializeObject(new { filePath });
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
