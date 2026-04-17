@@ -11,6 +11,9 @@ namespace Toolkit_API.Middleware
             _requestDelegate = requestDelegate;
             _logger = logger;
         }
+        // NOTE : The exposing of the whole error message is not recommended in production environment,
+        // it is only for development and testing purposes. In production,
+        // it is better to log the error message and stack trace, and return a generic error message to the client.
         public async Task Invoke(HttpContext context)
         {
 

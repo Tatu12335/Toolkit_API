@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
 namespace Toolkit_API.Infrastructure.Services
@@ -21,11 +20,7 @@ namespace Toolkit_API.Infrastructure.Services
             [0x50, 0x4B, 0x03, 0x04, ..] => "ZIP Archive",
             _ => "Unknown File Type"
         };
-        public byte[] DetermineMagicBytes(byte[] bytes)
-        {
-            var magicBytes = bytes.Take(4).ToArray();
-            return magicBytes;
-        }
+
         public async Task<string> AnalyzeFile(string filePath)
         {
             var bytes = await File.ReadAllBytesAsync(filePath);
@@ -35,32 +30,32 @@ namespace Toolkit_API.Infrastructure.Services
         }
         public async Task<bool> ExtensionMatches(string filepath)
         {
-            if (File.Exists(filepath))
-            {
-                var extension = Path.GetExtension(filepath);
-                var bytes = await File.ReadAllBytesAsync(filepath);
-                var detectedType = await Detect(bytes);
-                return detectedType.Contains(extension.TrimStart('.'), StringComparison.OrdinalIgnoreCase);
-            }
-            else
-            {
+            if (!File.Exists(filepath))
                 throw new FileNotFoundException($"File not found: {filepath}");
-            }
+
+            var extension = Path.GetExtension(filepath);
+            var bytes = await File.ReadAllBytesAsync(filepath);
+            var detectedType = await Detect(bytes);
+
+            return detectedType.Contains(extension.TrimStart('.'), StringComparison.OrdinalIgnoreCase);
+
         }
-        public async Task<bool> CheckForSuspiciousPatterns(string filePath,FileAnalysisResult fileAnalysisResult,ExtractedStrings extractedStrings)
+        public async Task<bool> CheckForSuspiciousPatterns(string filePath, ExtractedStrings extractedStrings)
         {
-            
+
             var bytes = await File.ReadAllBytesAsync(filePath);
-            
+
             foreach (var pattern in extractedStrings.Patterns)
             {
                 if (bytes.AsSpan().IndexOf(pattern) >= 0)
                 {
                     Debug.WriteLine($"Suspicious pattern found in file: {filePath}");
-                     
+
                     return true;
                 }
-            } return false;
+
+            }
+            return false;
         }
     }
 }

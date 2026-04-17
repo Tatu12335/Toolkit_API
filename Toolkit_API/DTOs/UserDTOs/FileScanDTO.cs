@@ -6,6 +6,6 @@ namespace Toolkit_API.DTOs.UserDTOs
     {
         [Required]
         public string filePath { get; set; }
-        
+
     }
 }

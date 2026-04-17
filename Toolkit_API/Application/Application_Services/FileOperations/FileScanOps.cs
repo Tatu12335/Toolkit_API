@@ -1,4 +1,6 @@
 ﻿using Toolkit_API.Application.Interfaces;
+using Toolkit_API.Domain.Entities.FileAnalysis;
+using Toolkit_API.Infrastructure.Services;
 
 namespace Toolkit_API.Application.Application_Services.Operations
 {
@@ -8,13 +10,15 @@ namespace Toolkit_API.Application.Application_Services.Operations
         private readonly ICallExternalAPI _externalAPI;
         private readonly HandleResult _handleResult;
         private readonly StaticFileAnalysis _staticFileAnalysis;
-        public FileScanOps(IFileScanRepo repository, ICallExternalAPI externalAPI, HandleResult handleResult, StaticFileAnalysis staticFileAnalysis)
+        private readonly FileHasher _fileHasher;
+        public FileScanOps(IFileScanRepo repository, ICallExternalAPI externalAPI, HandleResult handleResult, StaticFileAnalysis staticFileAnalysis, FileHasher fileHasher)
         {
             _repository = repository;
             _externalAPI = externalAPI;
             _handleResult = handleResult;
+            _fileHasher = fileHasher;
             _staticFileAnalysis = staticFileAnalysis;
-            
+
         }
 
         public async Task<string> ScanFile(string filePath, int userId)
@@ -25,14 +29,25 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 throw new FileNotFoundException();
 
 
-            var hash = await _repository.ScanFile(filePath, userId);
+            var hash = await _fileHasher.HashFileAsync(filePath);
             var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
-            var analysisResult = await _staticFileAnalysis.AnalyzeFileExtension(filePath);
-            var handled = await _handleResult.HandleAsync(result,analysisResult);
-            return handled;
+            var handled = await _handleResult.HandleAsync(result);
+            
+            var staticAnalysisResult = await StaticScan(filePath, userId);
+            await _repository.InsertAll(filePath, userId, staticAnalysisResult.Score);
+            return $"Static Analysis Result: {staticAnalysisResult.AnalysisResult}, Score: {staticAnalysisResult.Score}";
 
         }
+        public async Task<FileAnalysisResult> StaticScan(string filePath, int userId)
+        {
+            if (filePath == null)
+                throw new ArgumentNullException();
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException();
 
+            var analysisResult = await _staticFileAnalysis.AnalyzeFile(filePath);
+            return analysisResult;
 
+        }
     }
 }

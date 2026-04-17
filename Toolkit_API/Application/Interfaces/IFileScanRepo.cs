@@ -1,7 +1,11 @@
-﻿namespace Toolkit_API.Application.Interfaces
+﻿using Toolkit_API.Domain.Entities.Files;
+
+namespace Toolkit_API.Application.Interfaces
 {
     public interface IFileScanRepo
     {
-        public Task<byte[]> ScanFile(string filePath, int userId);
+        public Task<FileScanLog> GetScanLog(int logId);
+        public Task InsertScore(int logId, double score);
+        public Task<byte[]> InsertAll(string filePath, int userId, double score);
     }
 }
