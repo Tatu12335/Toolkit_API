@@ -6,6 +6,6 @@ namespace Toolkit_API.Application.Interfaces
         public Task<string> Detect(byte[] bytes);
         public Task<string> AnalyzeFile(string filePath);
         public Task<bool> ExtensionMatches(string filepath);
-        public Task<bool> CheckForSuspiciousPatterns(string filePath, FileAnalysisResult fileAnalysisResult, ExtractedStrings extractedStrings);
+        public Task<bool> CheckForSuspiciousPatterns(string filePath,ExtractedStrings extractedStrings);
     }
 }

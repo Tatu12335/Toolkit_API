@@ -88,7 +88,9 @@ builder.Services.AddTransient<IFileScanRepo, FileScanRepo>(sp =>
 builder.Services.AddTransient<FileScanOps>(sp =>
     new FileScanOps(sp.GetRequiredService<IFileScanRepo>(),
     sp.GetRequiredService<ICallExternalAPI>(),
-    sp.GetRequiredService<HandleResult>(), sp.GetRequiredService<StaticFileAnalysis>())
+    sp.GetRequiredService<HandleResult>(), sp.GetRequiredService<StaticFileAnalysis>(),
+    sp.GetRequiredService<FileHasher>()
+    )
 );
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 
@@ -102,7 +104,7 @@ builder.Services.AddTransient<HandleResult>();
 builder.Services.AddTransient<IFileAnalysis, FileAnalysis>();
 builder.Services.AddTransient<ExtractedStrings>();
 builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<HandleResult>(), 0, sp.GetRequiredService<ExtractedStrings>()));
-builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<ScoringAlg>()));
+builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<ScoringAlg>(), sp.GetRequiredService<ExtractedStrings>()));
 
 
 var app = builder.Build();

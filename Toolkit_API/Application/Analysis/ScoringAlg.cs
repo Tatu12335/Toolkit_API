@@ -21,12 +21,8 @@ namespace Toolkit_API.Application.Analysis
             _extractedStrings = extractedStrings;
         }
 
-        public async Task<double> CalculateScore(string filepath, FileAnalysisResult fileAnalysisResult)
+        public async Task<double> CalculateScore(string filepath, bool suspiciousPatterns, bool extensionMatches)
         {
-
-            var extensionMatches = await _fileAnalysis.ExtensionMatches(filepath);
-            var suspiciousPatterns = await _fileAnalysis.CheckForSuspiciousPatterns(filepath, fileAnalysisResult, _extractedStrings);
-
             if (suspiciousPatterns)
                 _score += 30.0; // Penalty for suspicious patterns
 
