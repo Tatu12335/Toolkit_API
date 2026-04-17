@@ -12,33 +12,33 @@ namespace Toolkit_API.Application.Analysis
         private readonly IFileAnalysis _fileAnalysis;
         public readonly HandleResult _handleResult;
         private double _score;
-        public ScoringAlg(IFileAnalysis fileAnalysis, HandleResult handleResult, double score)
+        private readonly ExtractedStrings _extractedStrings;
+        public ScoringAlg(IFileAnalysis fileAnalysis, HandleResult handleResult, double score, ExtractedStrings extractedStrings)
         {
             _fileAnalysis = fileAnalysis;
             _handleResult = handleResult;
             this._score = score;
+            _extractedStrings = extractedStrings;
         }
 
-        public async Task <double> CalculateScore(string filepath,FileAnalysisResult fileAnalysisResult)
+        public async Task<double> CalculateScore(string filepath, FileAnalysisResult fileAnalysisResult)
         {
 
             var extensionMatches = await _fileAnalysis.ExtensionMatches(filepath);
-            var suspiciousPatterns = await _fileAnalysis.CheckForSuspiciousPatterns(filepath, fileAnalysisResult, new ExtractedStrings());
-            
-
+            var suspiciousPatterns = await _fileAnalysis.CheckForSuspiciousPatterns(filepath, fileAnalysisResult, _extractedStrings);
 
             if (suspiciousPatterns)
                 _score += 30.0; // Penalty for suspicious patterns
 
             if (!extensionMatches)
                 _score += 20.0; // Penalty for extension mismatch
-            
+
             switch (_score)
             {
                 case > MaxScore:
                     _score = MaxScore;
                     break;
-                
+
                 case < MinScore:
                     _score = MinScore;
                     break;

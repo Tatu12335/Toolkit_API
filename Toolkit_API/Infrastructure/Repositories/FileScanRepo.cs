@@ -28,7 +28,7 @@ namespace Toolkit_API.Infrastructure.Repositories
                     FileName = fileInfo.Name,
                     FileHash = hash,
                     UserId = userId,
-                    
+
                 });
 
                 return hash;

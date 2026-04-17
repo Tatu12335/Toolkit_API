@@ -16,7 +16,7 @@ namespace Toolkit_API.Controllers.FileAnalysisControllers
             _fileAnalysis = fileAnalysis;
         }
         [HttpPost("Analyze")]
-        public async Task<IActionResult> AnalyzeFile([FromBody]FileAnalysisDTO fileDTO)
+        public async Task<IActionResult> AnalyzeFile([FromBody] FileAnalysisDTO fileDTO)
         {
             var result = await _fileAnalysis.AnalyzeFile(fileDTO.FilePath);
             return Ok(result);

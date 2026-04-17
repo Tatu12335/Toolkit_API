@@ -9,9 +9,9 @@ namespace Toolkit_API.Application.Application_Services.Operations
     {
         private readonly IFileAnalysis _fileAnalysis;
         private readonly ScoringAlg _scoringAlg;
-       
-        public StaticFileAnalysis(IFileAnalysis fileAnalysis, ScoringAlg scoringAlg) 
-        { 
+
+        public StaticFileAnalysis(IFileAnalysis fileAnalysis, ScoringAlg scoringAlg)
+        {
             _fileAnalysis = fileAnalysis;
             _scoringAlg = scoringAlg;
         }
@@ -20,23 +20,13 @@ namespace Toolkit_API.Application.Application_Services.Operations
             if (filePath == null)
                 throw new ArgumentNullException();
             if (!File.Exists(filePath))
-                throw new FileNotFoundException();
-            
-
-            var extension = Path.GetExtension(filePath);
+                throw new FileNotFoundException(); 
 
             var analysisResult = await _fileAnalysis.AnalyzeFile(filePath);
 
-            var fileAnalysisResult = new FileAnalysisResult
-            {
-                FilePath = filePath,
-                AnalysisResult = analysisResult
-            };
-            
 
 
-            var score = await _scoringAlg.CalculateScore(filePath, fileAnalysisResult);
-
+            var score = await _scoringAlg.CalculateScore(filePath);
             
 
             Debug.WriteLine($"File Analysis Result: {analysisResult}");
@@ -45,7 +35,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             {
                 FilePath = filePath,
                 AnalysisResult = analysisResult,
-                Score = score      
+                Score = score
             };
         }
     }
