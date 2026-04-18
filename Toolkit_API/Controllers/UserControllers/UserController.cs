@@ -22,13 +22,14 @@ namespace Toolkit_API.Controllers.UserControllers
         }
 
 
-        [HttpPost("Create_User")]
+        [HttpPost("Register")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO userDTO)
         {
 
             await _createUser.Create(userDTO);
             return Ok($"User : {userDTO.username}, created");
         }
+        // This was for testing purposes, to check if the user is authenticated and authorized to access this endpoint, and to check if the GetUser method in the UserRepo is working correctly, it will be removed later
         [Authorize]
         [HttpGet("Get_Users")]
         public async Task<IActionResult> GetUserAsync([FromHeader] GetUserDTO userDTO)

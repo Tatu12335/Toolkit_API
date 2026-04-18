@@ -2,7 +2,7 @@
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Files;
 
-namespace Toolkit_API.Infrastructure
+namespace Toolkit_API.Infrastructure.Services
 {
     public class ExternalCalls : ICallExternalAPI
     {

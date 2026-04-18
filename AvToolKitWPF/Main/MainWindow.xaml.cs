@@ -14,7 +14,7 @@ namespace AvToolKitWPF.Main
     public partial class MainWindow : MetroWindow
     {
         private readonly string _token;
-        
+
         public MainWindow(string token)
         {
             InitializeComponent();
@@ -45,25 +45,18 @@ namespace AvToolKitWPF.Main
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
                     var response = await client.PostAsync("https://localhost:7023/FileOps/Scan", content);
-                    var analyzeResponse = await client.PostAsync("https://localhost:7023/FileOps/Analysis/Analyze", content);
-                    
-                    if(!analyzeResponse.IsSuccessStatusCode)
-                    {
-                        var analyzeContent = await analyzeResponse.Content.ReadAsStringAsync();
-                        MessageBox.Show($"Analysis failed: {analyzeContent}", "Analysis Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
+
 
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    
+
                     if (!response.IsSuccessStatusCode)
                     {
                         MessageBox.Show($"Scan failed: {responseContent}", "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    
-                        ListBoxResults.Items.Add($"Scan successful: {responseContent}");
+
+                    ListBoxResults.Items.Add($"Scan successful: {responseContent}");
                 }
             }
             catch (HttpIOException ioex)
@@ -76,6 +69,6 @@ namespace AvToolKitWPF.Main
             }
         }
 
-       
+
     }
 }

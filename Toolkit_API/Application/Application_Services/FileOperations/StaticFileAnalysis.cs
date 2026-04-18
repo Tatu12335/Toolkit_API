@@ -9,11 +9,13 @@ namespace Toolkit_API.Application.Application_Services.Operations
     {
         private readonly IFileAnalysis _fileAnalysis;
         private readonly ScoringAlg _scoringAlg;
-       
-        public StaticFileAnalysis(IFileAnalysis fileAnalysis, ScoringAlg scoringAlg) 
-        { 
+        private readonly ExtractedStrings _extractedStrings;
+
+        public StaticFileAnalysis(IFileAnalysis fileAnalysis, ScoringAlg scoringAlg, ExtractedStrings extractedStrings)
+        {
             _fileAnalysis = fileAnalysis;
             _scoringAlg = scoringAlg;
+            _extractedStrings = extractedStrings;
         }
         public async Task<FileAnalysisResult> AnalyzeFile(string filePath)
         {
@@ -21,23 +23,13 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 throw new ArgumentNullException();
             if (!File.Exists(filePath))
                 throw new FileNotFoundException();
-            
-
-            var extension = Path.GetExtension(filePath);
 
             var analysisResult = await _fileAnalysis.AnalyzeFile(filePath);
+            var extensionMatch = await _fileAnalysis.ExtensionMatches(filePath);
+            var metadataBool = await _fileAnalysis.CheckForSuspiciousPatterns(filePath, _extractedStrings);
 
-            var fileAnalysisResult = new FileAnalysisResult
-            {
-                FilePath = filePath,
-                AnalysisResult = analysisResult
-            };
-            
+            var score = await _scoringAlg.CalculateScore(filePath, metadataBool, extensionMatch);
 
-
-            var score = await _scoringAlg.CalculateScore(filePath, fileAnalysisResult);
-
-            
 
             Debug.WriteLine($"File Analysis Result: {analysisResult}");
             Debug.WriteLine($"File Analysis Score: {(double)score}");
@@ -45,7 +37,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             {
                 FilePath = filePath,
                 AnalysisResult = analysisResult,
-                Score = score      
+                Score = score
             };
         }
     }

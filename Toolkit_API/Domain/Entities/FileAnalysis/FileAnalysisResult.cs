@@ -5,6 +5,6 @@
         public string FilePath { get; set; }
         public string AnalysisResult { get; set; }
         public double Score { get; set; }
-        
+
     }
 }

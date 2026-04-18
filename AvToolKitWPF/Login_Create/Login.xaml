@@ -20,6 +20,7 @@
             <Button Margin="10"
                     Content="Login" Width="96" 
                     Click="Button_Click"/>
+            <TextBlock  FontWeight="Bold" HorizontalAlignment="Center" Margin="0,20,0,0"><Hyperlink Click="Hyperlink_Click_1"><Run Text="create account"/></Hyperlink></TextBlock>
         </StackPanel>
     </Grid>
 </mah:MetroWindow>
