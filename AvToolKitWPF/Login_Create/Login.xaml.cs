@@ -52,5 +52,11 @@ namespace AvToolKitWPF.Login_Create
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void Hyperlink_Click_1(object sender, RoutedEventArgs e)
+        {
+            var createAccountWindow = new Create();
+            createAccountWindow.Show();
+            this.Close();
+        }
     }
 }
