@@ -80,6 +80,14 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return response.ToString();
             }
         }
-
+        public async Task<bool> EmailExist(string email)
+        {
+            string sqlQuery = "Select Count(1) From Users where newemail = @Email";
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var response = await conn.QueryFirstAsync<bool>(sqlQuery, new { Email = email });
+                return response;
+            }
+        }
     }
 }

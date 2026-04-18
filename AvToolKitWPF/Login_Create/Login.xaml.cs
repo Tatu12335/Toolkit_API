@@ -57,6 +57,7 @@ namespace AvToolKitWPF.Login_Create
             var createAccountWindow = new Create();
             createAccountWindow.Show();
             this.Close();
+            
         }
     }
 }

@@ -9,10 +9,14 @@
     <Grid>
         <StackPanel>
             <TextBlock Text="Create Account" FontSize="24" FontWeight="Bold" Margin="0,20,0,20" HorizontalAlignment="Center"/>
-            <Label Content="Username:" HorizontalAlignment="Center"/>
+            <TextBlock Text="Username:" HorizontalAlignment="Center"/>
             <TextBox x:Name="UsernameTextBox"  Margin="0,10,0,10" Width="200" HorizontalAlignment="Center"/>
-            <Label Content="Password:" HorizontalAlignment="Center"/>
+            <TextBlock Text="Email:" HorizontalAlignment="Center"/>
+            <TextBox x:Name="EmailTextBox" Margin="0,10,0,10" Width="200" HorizontalAlignment="Center"/>
+            <TextBlock Text="Password:" HorizontalAlignment="Center"/>
             <PasswordBox x:Name="PasswordBox" Width="200"/>
+            <TextBlock Text="Confirm Password:" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+            <PasswordBox x:Name="ConfirmPasswordBox" Width="200" Margin="0,10,0,10"/>
             <Button Content="Create Account" Width="150" Margin="0,20,0,0" Click="CreateAccountButton_Click" HorizontalAlignment="Center"/>
             <TextBlock  FontWeight="Bold" HorizontalAlignment="Center" Margin="0,20,0,0"><Hyperlink Click="Hyperlink_Click_1"><Run Text="Login"/></Hyperlink></TextBlock>
         </StackPanel>
