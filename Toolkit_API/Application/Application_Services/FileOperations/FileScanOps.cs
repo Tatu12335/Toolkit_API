@@ -35,7 +35,9 @@ namespace Toolkit_API.Application.Application_Services.Operations
             if (hashExists != null)
             {
                 var file = await _repository.GetFile(hash, userId);
-                return $"File has already been scanned. FileName: {file.FileName}, Score: {file.Score}";
+                
+                if (file != null)
+                    return $"File has already been scanned. FileName: {file.FileName}, Score: {file.Score}";
 
             }
 
