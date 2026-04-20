@@ -28,18 +28,24 @@ namespace Toolkit_API.Application.Analysis
 
             if (!extensionMatches)
                 _score += 20.0; // Penalty for extension mismatch
-
-            switch (_score)
+            
+            switch(_score)
             {
-                case > MaxScore:
-                    _score = MaxScore;
+                case >= 80.0:
+                    _score += 10.0; // Bonus for highly suspicious files
                     break;
-
-                case < MinScore:
-                    _score = MinScore;
+                case >= 50.0:
+                    _score += 5.0; // Bonus for moderately suspicious files
+                    break;
+                case >= 20.0:
+                    _score += 2.0; // Bonus for slightly suspicious files
                     break;
             }
-
+            if(_score > MaxScore)
+                _score = MaxScore;
+            if(_score < MinScore)
+                _score = MinScore;
+           
 
             return _score;
         }
