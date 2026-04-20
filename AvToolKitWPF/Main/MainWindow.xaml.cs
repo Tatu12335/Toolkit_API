@@ -69,6 +69,15 @@ namespace AvToolKitWPF.Main
             }
         }
 
+        private void ButtonSubscribe_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonAbout_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
     }
 }

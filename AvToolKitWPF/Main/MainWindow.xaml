@@ -15,6 +15,10 @@
             <ListBox x:Name="ListBoxResults" Margin="100,0,480,100"/>
             
         </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">
+            <Button Content="About" Width="80" Click="ButtonAbout_Click"/>
+            <Button Content="Subscribe" Width="80" Click="ButtonSubscribe_Click"/>
+        </StackPanel>
 
     </Grid>
 </mah:MetroWindow>

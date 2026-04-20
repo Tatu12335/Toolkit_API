@@ -30,6 +30,8 @@ namespace Toolkit_API.Application.Application_Services.Operations
 
             var score = await _scoringAlg.CalculateScore(filePath, metadataBool, extensionMatch);
 
+            
+            
 
             Debug.WriteLine($"File Analysis Result: {analysisResult}");
             Debug.WriteLine($"File Analysis Score: {(double)score}");
@@ -37,7 +39,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             {
                 FilePath = filePath,
                 AnalysisResult = analysisResult,
-                Score = score
+                Score = score,
             };
         }
     }

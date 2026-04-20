@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Toolkit_API.Application.Analysis;
 using Toolkit_API.Application.App_Services.User;
+using Toolkit_API.Application.Application_Services.EmailServices;
 using Toolkit_API.Application.Application_Services.Operations;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
@@ -104,6 +105,8 @@ builder.Services.AddTransient<IFileAnalysis, FileAnalysis>();
 builder.Services.AddTransient<ExtractedStrings>();
 builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<HandleResult>(), 0, sp.GetRequiredService<ExtractedStrings>()));
 builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<ScoringAlg>(), sp.GetRequiredService<ExtractedStrings>()));
+builder.Services.AddTransient<IEmailServices, EmailServices>();
+builder.Services.AddTransient<NewLetter>(sp => new NewLetter(sp.GetRequiredService<IEmailServices>()));
 
 
 var app = builder.Build();
