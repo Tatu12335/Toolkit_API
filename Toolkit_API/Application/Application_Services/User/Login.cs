@@ -23,6 +23,12 @@ namespace Toolkit_API.Application.App_Services.User
 
             var isValid = _passwordHasher.VerifyPassword(loginDTO.password, user.passwordHash, user.passwordSalt);
 
+            var isBanned = await CheckBanStatus(loginDTO.username);
+            
+            if (isBanned)
+                throw new UnauthorizedAccessException("User is banned.");
+
+
             if (!isValid)
                 throw new UnauthorizedAccessException();
 

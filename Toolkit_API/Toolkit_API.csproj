@@ -26,7 +26,7 @@
     <Folder Include="test_dataset\clean\" />
     <Folder Include="test_dataset\malicious\" />
     <Folder Include="test_dataset\edge-cases\" />
-    <Folder Include="test_dataset\suspicious\" />
+	  <Folder Include="test_dataset\suspicious\"/>
   </ItemGroup>
 
 </Project>

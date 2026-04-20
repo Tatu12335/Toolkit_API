@@ -37,6 +37,7 @@ namespace Toolkit_API.Controllers.UserControllers
             await _userRepo.GetUser(userDTO.username);
             return Ok($"{userDTO.username}");
         }
+
         [HttpGet]
         public async Task<IActionResult> TestConnection()
         {
