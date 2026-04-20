@@ -1,7 +1,7 @@
-﻿using Toolkit_API.Application.Interfaces;
-using MimeKit;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
+using MimeKit;
+using Toolkit_API.Application.Interfaces;
 namespace Toolkit_API.Infrastructure.Services
 {
     public class EmailServices : IEmailServices
@@ -19,14 +19,14 @@ namespace Toolkit_API.Infrastructure.Services
             {
                 Text = body
             };
-            
+
             var pS = Environment.GetEnvironmentVariable("NEWS_PS") ?? throw new InvalidOperationException("'NEWS_PS' not found");
-            
+
             try
             {
                 using (var client = new SmtpClient())
                 {
-                    
+
                     await client.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
                     await client.AuthenticateAsync("avtoolkitnews@gmail.com", pS);
                     await client.SendAsync(msg);
@@ -35,9 +35,9 @@ namespace Toolkit_API.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                
+
                 return $"Failed to send email: {ex.Message}";
-            
+
             }
 
             return "Email sent successfully";

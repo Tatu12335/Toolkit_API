@@ -1,9 +1,4 @@
 ﻿using Toolkit_API.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Toolkit_API.Application.Application_Services.EmailServices
@@ -18,22 +13,22 @@ namespace Toolkit_API.Application.Application_Services.EmailServices
         }
         public async Task<string> Subscribe(string email)
         {
-            if(string.IsNullOrEmpty(email) || !email.Contains("@"))            
+            if (string.IsNullOrEmpty(email) || !email.Contains("@"))
                 return "Invalid email address";
-            
+
             return await _emailServices.SubscribeToNewsLetter(email);
         }
         public async Task<string> SendNewLetter(string to, string subject, string body)
         {
             if (string.IsNullOrEmpty(to) || !to.Contains("@"))
                 return "Invalid email address";
-            
+
             if (string.IsNullOrEmpty(subject))
                 return "Subject cannot be empty";
-            
+
             if (string.IsNullOrEmpty(body))
                 return "Body cannot be empty";
-            
+
             return await _emailServices.SendEmail(to, subject, body);
         }
     }

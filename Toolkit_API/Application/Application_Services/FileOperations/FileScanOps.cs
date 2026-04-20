@@ -35,7 +35,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             if (hashExists != null)
             {
                 var file = await _repository.GetFile(hash, userId);
-                
+
                 if (file != null)
                     return $"File has already been scanned. FileName: {file.FileName}, Score: {file.Score}";
 
@@ -47,7 +47,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             var staticAnalysisResult = await StaticScan(filePath, userId);
 
             await _repository.InsertAll(filePath, userId, staticAnalysisResult.Score);
-            return $"Static Analysis Result: {staticAnalysisResult.AnalysisResult}, Score: {staticAnalysisResult.Score}";
+            return $"Static Analysis Result: {staticAnalysisResult.AnalysisResult}, Score: {staticAnalysisResult.Score}" ;
 
         }
         public async Task<FileAnalysisResult> StaticScan(string filePath, int userId)
