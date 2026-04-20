@@ -1,8 +1,6 @@
-﻿using Toolkit_API.Application.Interfaces;
-using Dapper;
-using System.Data.SqlClient;
-using System.Data;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using Toolkit_API.Application.Interfaces;
 
 namespace Toolkit_API.Infrastructure.Repositories
 {
