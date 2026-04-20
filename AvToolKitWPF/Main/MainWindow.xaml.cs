@@ -1,8 +1,6 @@
-﻿using AvToolKitWPF.AdminPanel;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
@@ -17,25 +15,20 @@ namespace AvToolKitWPF.Main
     {
         private readonly string _token;
         private readonly string _role;
-        
+
         public MainWindow(string token, string role)
         {
             InitializeComponent();
             _token = token;
             _role = role;
+
             if (string.Equals(_role, "Admin", StringComparison.OrdinalIgnoreCase))
                 AdminPanelButton.Visibility = Visibility.Visible;
         }
 
         private async void ButtonScan_Click(object sender, RoutedEventArgs e)
         {
-           
 
-            
-            
-            
-            
-            
             var dialog = new OpenFileDialog();
             var selected = dialog.ShowDialog().Value;
             if (!selected)
@@ -65,7 +58,7 @@ namespace AvToolKitWPF.Main
                         MessageBox.Show($"Scan failed: {responseContent}", "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                   
+
 
                     ListBoxResults.Items.Add($"Scan successful: {responseContent}");
                 }

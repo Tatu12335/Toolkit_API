@@ -1,13 +1,11 @@
 ﻿using AvToolKitWPF.Main;
 using MahApps.Metro.Controls;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.IdentityModel.Tokens.Jwt;
 namespace AvToolKitWPF.Login_Create
 {
     /// <summary>
@@ -39,10 +37,10 @@ namespace AvToolKitWPF.Login_Create
                     {
                         var handler = new JwtSecurityTokenHandler();
                         var jwtToken = handler.ReadJwtToken(await response.Content.ReadAsStringAsync());
-                        
+
                         var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
-                        
+
                         MessageBox.Show($"Login Successful", "Login Successful", MessageBoxButton.OK, MessageBoxImage.Information);
                         var mainWindow = new MainWindow(jwtToken.RawData, role);
                         mainWindow.Show();
