@@ -20,6 +20,7 @@ namespace Toolkit_API.Controllers.AuthControllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
+
             var result = await _login.LoginMethod(loginDTO);
             return Ok(result);
         }

@@ -19,6 +19,8 @@
             <Button Content="About" Width="80" Click="ButtonAbout_Click"/>
             <Button Content="Subscribe" Width="80" Click="ButtonSubscribe_Click"/>
         </StackPanel>
-
+        <StackPanel>
+            <Button Content="Admin Panel" Width="150" Margin="10" HorizontalAlignment="Left" Click="ButtonAdminPanel_Click" Visibility="Hidden" Name="AdminPanelButton"/>
+        </StackPanel>
     </Grid>
 </mah:MetroWindow>

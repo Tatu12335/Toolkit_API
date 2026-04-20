@@ -89,5 +89,23 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return response;
             }
         }
+        public async Task<Users> GetUserByEmail(string email)
+        {
+            string sqlQuery = "Select * From Users Where newemail = @Email";
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var user = await conn.QuerySingleAsync<Users>(sqlQuery, new { Email = email });
+                return user;
+            }
+        }
+        public async Task<bool> GetBanStatus(string username)
+        {
+            string sqlQuery = "Select isBanned From Users Where username = @Username";
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var isBanned = await conn.QueryFirstAsync<bool>(sqlQuery, new { Username = username });
+                return isBanned;
+            }
+        }
     }
 }
