@@ -19,5 +19,14 @@ namespace Toolkit_API.Application.Application_Services.Admin
         {
             return await _adminRepo.CheckAdminStatus(userId);
         }
+        public async Task<string> SearchByUsername(string username)
+        {
+            var result = await _adminRepo.SearchUserByName(username);
+            
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("User not found.");
+            
+            return result;
+        }
     }
 }

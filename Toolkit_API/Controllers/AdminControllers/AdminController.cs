@@ -15,6 +15,9 @@ namespace Toolkit_API.Controllers.AdminControllers
             var result = await _adminOperations.GetAllUsers();
             return Ok(result);
         }
-
-    }
+        public async Task<IActionResult> SearchByUName(string username)
+        {
+            var result = await _adminOperations.SearchByUsername(username);
+            return Ok(result);
+        }
 }
