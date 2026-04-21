@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Toolkit_API.Application.Analysis;
 using Toolkit_API.Application.App_Services.User;
+using Toolkit_API.Application.Application_Services.Admin;
 using Toolkit_API.Application.Application_Services.EmailServices;
 using Toolkit_API.Application.Application_Services.Operations;
 using Toolkit_API.Application.Interfaces;
@@ -87,6 +88,10 @@ builder.Services.AddTransient<IFileScanRepo, FileScanRepo>(sp =>
 );
 builder.Services.AddTransient<IAdminRepo, AdminRepository>(sp =>
     new AdminRepository(connetionString)
+);
+
+builder.Services.AddTransient<AdminOperations>(sp =>
+    new AdminOperations(sp.GetRequiredService<IAdminRepo>())
 );
 
 builder.Services.AddTransient<FileScanOps>(sp =>

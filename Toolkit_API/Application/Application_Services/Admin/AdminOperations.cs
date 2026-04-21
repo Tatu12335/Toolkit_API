@@ -22,11 +22,24 @@ namespace Toolkit_API.Application.Application_Services.Admin
         public async Task<string> SearchByUsername(string username)
         {
             var result = await _adminRepo.SearchUserByName(username);
-            
+
             if (string.IsNullOrEmpty(result))
                 throw new Exception("User not found.");
-            
+
             return result;
+        }
+        public async Task<string> DeleteUserByUsername(string username)
+        {
+            var result = await _adminRepo.DeleteUserByName(username);
+
+            if (result == 0)
+                throw new Exception("User not found or could not be deleted.");
+
+            return "User deleted successfully.";
+        }
+        public async Task<bool> SearchActiveUsers(string username)
+        {
+            return await _adminRepo.SearchActiveUsers(username);
         }
     }
 }

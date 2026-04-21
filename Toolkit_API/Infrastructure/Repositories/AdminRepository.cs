@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using System.Diagnostics;
 using Toolkit_API.Application.Interfaces;
+using Toolkit_API.Domain.Entities.Users;
 
 namespace Toolkit_API.Infrastructure.Repositories
 {
@@ -13,12 +15,13 @@ namespace Toolkit_API.Infrastructure.Repositories
             _connectionString = connectionString;
         }
 
-        public async Task<IEnumerable<string>> GetAllUsers()
+        public async Task<IEnumerable<ForAdminEntity>> GetAllUsers()
         {
-            var sqlQuery = "SELECT id,username,newemail FROM Users";
-            using (var connection = new SqlConnection(Environment.GetEnvironmentVariable("DefaultConnection")))
+            var sqlQuery = "SELECT id,username,newemail,roles FROM Users";
+            using (var connection = new SqlConnection(_connectionString))
             {
-                var users = await connection.QueryAsync<string>(sqlQuery);
+                var users = await connection.QueryAsync<ForAdminEntity>(sqlQuery);
+               
                 return users;
             }
         }
@@ -94,5 +97,41 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return affectedRows;
             }
         }
-    }
+        public async Task<int> UpdateUsername(int userId, string newUsername)
+        {
+            var sqlQuery = "UPDATE Users SET username = @NewUsername WHERE id = @UserId";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var affectedRows = await connection.ExecuteAsync(sqlQuery, new { UserId = userId, NewUsername = newUsername });
+                return affectedRows;
+            }
+        }
+        public async Task<string> SearchUserByName(string username)
+        {
+            var sqlQuery = "SELECT id,username,newemail FROM Users WHERE username LIKE @Username";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var user = await connection.QueryFirstOrDefaultAsync<string>(sqlQuery, new { Username = username });
+                return user;
+            }
+        }
+        public async Task<int> DeleteUserByName(string username)
+        {
+            var sqlQuery = "DELETE FROM Users WHERE username = @Username";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var affectedRows = await connection.ExecuteAsync(sqlQuery, new { Username = username });
+                return affectedRows;
+            }
+        }
+        public async Task<bool> SearchActiveUsers(string username)
+        {
+            var sqlQuery = "SELECT COUNT(1) FROM Users WHERE username LIKE @Username AND isActive = 1";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var exists = await connection.QueryFirstAsync<bool>(sqlQuery, new { Username = username });
+                return exists;
+            }
+        }
+    } 
 }

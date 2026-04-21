@@ -1,8 +1,10 @@
-﻿namespace Toolkit_API.Application.Interfaces
+﻿using Toolkit_API.Domain.Entities.Users;
+
+namespace Toolkit_API.Application.Interfaces
 {
     public interface IAdminRepo
     {
-        public Task<IEnumerable<string>> GetAllUsers();
+        public Task<IEnumerable<ForAdminEntity>> GetAllUsers();
         public Task<bool> CheckAdminStatus(int userId);
         public Task<bool> CheckUserExists(int userId);
         public Task<string> GetUserEmail(int userId);

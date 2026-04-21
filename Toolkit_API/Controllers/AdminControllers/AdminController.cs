@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Toolkit_API.Application.Application_Services.Admin;
 namespace Toolkit_API.Controllers.AdminControllers
 {
-    public class AdminController : Controller
+    [ApiController]
+    [Route("Admin/[controller]")]
+    [EnableRateLimiting("Fixed")]
+    public class AdminController : ControllerBase
     {
         private readonly AdminOperations _adminOperations;
 
@@ -10,14 +14,17 @@ namespace Toolkit_API.Controllers.AdminControllers
         {
             _adminOperations = adminOperations;
         }
+        [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
             var result = await _adminOperations.GetAllUsers();
             return Ok(result);
         }
+        [HttpGet("SearchByUsername")]
         public async Task<IActionResult> SearchByUName(string username)
         {
             var result = await _adminOperations.SearchByUsername(username);
             return Ok(result);
         }
+    }
 }
