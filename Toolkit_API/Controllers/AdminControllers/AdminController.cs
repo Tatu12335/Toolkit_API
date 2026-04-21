@@ -4,7 +4,7 @@ using Toolkit_API.Application.Application_Services.Admin;
 namespace Toolkit_API.Controllers.AdminControllers
 {
     [ApiController]
-    [Route("Admin/[controller]")]
+    [Route("[controller]")]
     [EnableRateLimiting("Fixed")]
     public class AdminController : ControllerBase
     {

@@ -21,7 +21,7 @@
             <StackPanel>
                 <CheckBox Content="Show Admins Only" Margin="10" Checked="CheckBox_Checked"/>
                 <CheckBox Content="Show Active Users Only" Margin="10" Checked="CheckBox_Checked_1"/>
-                <ListBox Margin="10" Name="UsersListBox">
+                <ListBox Margin="10" Name="UsersListBox" Width="400" Height="200" ScrollBar.Scroll="UsersListBox_Scroll">
                     <ListBoxItem Content="User1 - Admin"/>
                     <ListBoxItem Content="User2 - User"/>
                     <ListBoxItem Content="User3 - User"/>

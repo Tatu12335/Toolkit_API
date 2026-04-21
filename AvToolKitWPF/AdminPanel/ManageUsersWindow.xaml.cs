@@ -1,4 +1,11 @@
 ﻿using System.Windows;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading.Tasks;   
+using Toolkit_API.Domain.Entities;
+using System.Net.Http.Json;
+using Toolkit_API.Application.Interfaces;
+using Toolkit_API.Domain.Entities.Users;
 
 namespace AvToolKitWPF.AdminPanel
 {
@@ -10,6 +17,40 @@ namespace AvToolKitWPF.AdminPanel
         public ManageUsersWindow()
         {
             InitializeComponent();
+            this.Loaded += async (s, e) =>
+            {
+                try
+                {
+                    using (var conn = new HttpClient())
+                    {
+                        var response = await conn.GetAsync("https://localhost:7023/Admin/GetAllUsers");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var users = await response.Content.ReadFromJsonAsync<List<string>>();
+                            UsersListBox.Items.Clear();
+                            if(users == null || users.Count == 0)
+                            {
+                                MessageBox.Show("No users found.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                                return;
+                            }
+                            foreach (var user in users)
+                            {
+                                UsersListBox.Items.Add(user);
+                            }
+                            
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Failed to load users: {response.ReasonPhrase}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($" An error occured while loading users : {ex.Message}", " Error", MessageBoxButton.OK);
+                    return;
+                }
+            };
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -53,6 +94,11 @@ namespace AvToolKitWPF.AdminPanel
         }
 
         private void ListBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UsersListBox_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
         {
 
         }
