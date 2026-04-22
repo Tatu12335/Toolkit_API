@@ -86,12 +86,12 @@ namespace AvToolKitWPF.Main
                 string folderPath = folderDialog.FolderName;
                 MessageBox.Show($"Folder selected: {folderPath}", "Folder Selected", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                if(string.IsNullOrEmpty(folderPath))
+                if (string.IsNullOrEmpty(folderPath))
                 {
                     MessageBox.Show("Please select a valid folder.", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                
+
                 Stack<string> stack = new Stack<string>();
                 stack.Push(folderPath);
                 while (stack.Count > 0)
@@ -102,19 +102,19 @@ namespace AvToolKitWPF.Main
                         var files = Directory.GetFiles(currentPath);
                         foreach (var file in files)
                         {
-                            
+
                             using (var client = new HttpClient())
                             {
                                 var json = JsonConvert.SerializeObject(new { filePath = file });
-                                
+
                                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                                
+
                                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-                                
+
                                 var response = client.PostAsync("https://localhost:7023/FileOps/Scan", content).Result;
-                                
+
                                 var responseContent = response.Content.ReadAsStringAsync().Result;
-                                
+
                                 if (!response.IsSuccessStatusCode)
                                 {
                                     ListBoxResults.Items.Add($"Scan failed for {file}: {responseContent}");

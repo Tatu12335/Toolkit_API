@@ -100,7 +100,7 @@ builder.Services.AddTransient<FileScanOps>(sp =>
     sp.GetRequiredService<HandleResult>(),
     sp.GetRequiredService<StaticFileAnalysis>(),
     sp.GetRequiredService<FileHasher>()
-    
+
 
 
     )
@@ -116,13 +116,13 @@ builder.Services.AddTransient<HandleResult>();
 
 builder.Services.AddTransient<IFileAnalysis, FileAnalysis>();
 builder.Services.AddTransient<ExtractedStrings>();
-builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(), 
-    sp.GetRequiredService<HandleResult>(), 
-    0, 
+builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(),
+    sp.GetRequiredService<HandleResult>(),
+    0,
     sp.GetRequiredService<ExtractedStrings>()));
 
 builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(),
-    sp.GetRequiredService<ScoringAlg>(), 
+    sp.GetRequiredService<ScoringAlg>(),
     sp.GetRequiredService<ExtractedStrings>()));
 
 builder.Services.AddTransient<IEmailServices, EmailServices>();

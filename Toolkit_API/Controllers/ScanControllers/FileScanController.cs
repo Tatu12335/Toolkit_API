@@ -23,10 +23,10 @@ namespace Toolkit_API.Controllers.ScanControllers
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var result = await _fileScanOps.ScanFile(scanDTO.filePath, userId);
-            
+
             return Ok(result);
 
         }
-       
+
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Toolkit_API.Application.Interfaces;
+﻿using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
 using Toolkit_API.Infrastructure.Services;
 
@@ -12,7 +11,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
         private readonly HandleResult _handleResult;
         private readonly StaticFileAnalysis _staticFileAnalysis;
         private readonly FileHasher _fileHasher;
-        
+
         public FileScanOps(IFileScanRepo repository,
             ICallExternalAPI externalAPI,
             HandleResult handleResult,
@@ -67,7 +66,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             return analysisResult;
 
         }
-        
+
     }
 
 }
