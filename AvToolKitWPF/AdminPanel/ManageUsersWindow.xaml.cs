@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using Toolkit_API.Domain.Entities.Users;
 
@@ -121,7 +120,7 @@ namespace AvToolKitWPF.AdminPanel
             try
             {
                 var users = await GetAllUsers();
-                
+
                 if (users == null || users.Count == 0)
                     return;
                 foreach (var user in users)
@@ -156,8 +155,8 @@ namespace AvToolKitWPF.AdminPanel
         private async void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
 
-           
-  
+
+
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
