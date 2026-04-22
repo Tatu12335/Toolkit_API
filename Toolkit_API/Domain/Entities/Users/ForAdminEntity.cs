@@ -6,6 +6,6 @@
         public string username { get; set; }
         public string newemail { get; set; }
         public string roles { get; set; }
-        
+
     }
 }

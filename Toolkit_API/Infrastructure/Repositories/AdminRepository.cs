@@ -1,12 +1,11 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using System.Diagnostics;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Users;
 
 namespace Toolkit_API.Infrastructure.Repositories
 {
-    public class AdminRepository :  IAdminRepo
+    public class AdminRepository : IAdminRepo
     {
         private readonly string _connectionString;
 
@@ -21,7 +20,7 @@ namespace Toolkit_API.Infrastructure.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 var users = await connection.QueryAsync<ForAdminEntity>(sqlQuery);
-               
+
                 return users;
             }
         }
@@ -133,5 +132,5 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return exists;
             }
         }
-    } 
+    }
 }

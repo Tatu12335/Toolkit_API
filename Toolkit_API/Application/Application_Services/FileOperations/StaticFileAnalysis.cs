@@ -40,7 +40,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 FilePath = filePath,
                 AnalysisResult = analysisResult,
                 Score = score,
-                
+
             };
         }
     }
