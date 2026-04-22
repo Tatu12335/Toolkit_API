@@ -14,7 +14,7 @@ namespace Toolkit_API.Application.Interfaces
         public Task<int> UpdateUserRole(int userId, string newRole);
         public Task<int> UpdateUserEmail(int userId, string newEmail);
         public Task<int> UpdateUsername(int userId, string newUsername);
-        public Task<string> SearchUserByName(string username);
+        public Task<ForAdminEntity> SearchUserByName(string username);
         public Task<int> DeleteUserByName(string username);
         public Task<bool> SearchActiveUsers(string username);
 

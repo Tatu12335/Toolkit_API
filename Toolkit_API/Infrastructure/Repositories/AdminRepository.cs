@@ -6,7 +6,7 @@ using Toolkit_API.Domain.Entities.Users;
 
 namespace Toolkit_API.Infrastructure.Repositories
 {
-    public class AdminRepository : IAdminRepo
+    public class AdminRepository :  IAdminRepo
     {
         private readonly string _connectionString;
 
@@ -106,12 +106,12 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return affectedRows;
             }
         }
-        public async Task<string> SearchUserByName(string username)
+        public async Task<ForAdminEntity> SearchUserByName(string username)
         {
             var sqlQuery = "SELECT id,username,newemail FROM Users WHERE username LIKE @Username";
             using (var connection = new SqlConnection(_connectionString))
             {
-                var user = await connection.QueryFirstOrDefaultAsync<string>(sqlQuery, new { Username = username });
+                var user = await connection.QueryFirstOrDefaultAsync<ForAdminEntity>(sqlQuery, new { Username = username });
                 return user;
             }
         }

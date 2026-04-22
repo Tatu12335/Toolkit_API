@@ -14,8 +14,10 @@ namespace AvToolKitWPF.AdminPanel
     /// </summary>
     public partial class ManageUsersWindow : Window
     {
-        public ManageUsersWindow()
+        private readonly string _token;
+        public ManageUsersWindow(string token)
         {
+            _token = token;
             InitializeComponent();
             this.Loaded += async (s, e) =>
             {
@@ -23,6 +25,7 @@ namespace AvToolKitWPF.AdminPanel
                 {
                     using (var conn = new HttpClient())
                     {
+                        conn.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
                         var response = await conn.GetAsync("https://localhost:7023/Admin/GetAllUsers");
                         if (response.IsSuccessStatusCode)
                         {
@@ -53,9 +56,37 @@ namespace AvToolKitWPF.AdminPanel
             };
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                using (var conn = new HttpClient()) 
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(SearchUsernameTextBox.Text);
 
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                    conn.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                    var response = await conn.PostAsync("https://localhost:7023/Admin/SearchByUsername", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        var user = await response.Content.ReadFromJsonAsync<ForAdminEntity>();
+                        UsersListBox.Items.Clear();
+                        
+                        UsersListBox.Items.Add($"ID: {user.id} | Username: {user.username} | Email: {user.newemail} | Roles: {user.roles}");
+                    }
+                    else
+                    {
+                        UsersListBox.Items.Clear();
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($" An error occured while performing search : {ex.Message}", " Error", MessageBoxButton.OK);
+                return;
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -80,7 +111,7 @@ namespace AvToolKitWPF.AdminPanel
 
         private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-
+            SearchUsernameTextBox.Clear();
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)

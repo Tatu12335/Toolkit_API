@@ -15,7 +15,7 @@ using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Infrastructure.Services;
 using Toolkit_API.Middleware;
 
-
+// implement zip file scanning.
 // Time spent on the project : 30hrs 30min
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
@@ -116,8 +116,15 @@ builder.Services.AddTransient<HandleResult>();
 
 builder.Services.AddTransient<IFileAnalysis, FileAnalysis>();
 builder.Services.AddTransient<ExtractedStrings>();
-builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<HandleResult>(), 0, sp.GetRequiredService<ExtractedStrings>()));
-builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(), sp.GetRequiredService<ScoringAlg>(), sp.GetRequiredService<ExtractedStrings>()));
+builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(), 
+    sp.GetRequiredService<HandleResult>(), 
+    0, 
+    sp.GetRequiredService<ExtractedStrings>()));
+
+builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(),
+    sp.GetRequiredService<ScoringAlg>(), 
+    sp.GetRequiredService<ExtractedStrings>()));
+
 builder.Services.AddTransient<IEmailServices, EmailServices>();
 builder.Services.AddTransient<NewLetter>(sp => new NewLetter(sp.GetRequiredService<IEmailServices>()));
 builder.Services.AddTransient<IAdminRepo, AdminRepository>(sp =>

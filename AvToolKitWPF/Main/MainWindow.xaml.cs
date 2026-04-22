@@ -153,7 +153,7 @@ namespace AvToolKitWPF.Main
         }
         private void ButtonAdminPanel_Click(object sender, RoutedEventArgs e)
         {
-            var admin = new AdminPanel.AdminPanel();
+            var admin = new AdminPanel.AdminPanel(_token);
             admin.Show();
         }
     }
