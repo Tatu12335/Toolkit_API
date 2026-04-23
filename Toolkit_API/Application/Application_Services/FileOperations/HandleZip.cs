@@ -52,7 +52,7 @@ namespace Toolkit_API.Application.Application_Services.FileOperations
 
                     if (double.IsNaN(ratio) || double.IsInfinity(ratio) || ratio > _zipPolicies.MaxCompressionRatio)
                         return "Compression ratio exceeds the policy.";
-
+                    
                 }
 
                 var destinationPath = Path.Combine(tempRoot, entry.FullName);
@@ -70,9 +70,11 @@ namespace Toolkit_API.Application.Application_Services.FileOperations
                     Directory.Delete(tempRoot, recursive: true);
                     return "TempRoot Exists, Deleting.";
                 }
-                return "ZIP Handled";
+
+                return "";
 
             }
+            return "ZIP Handled";
         }
     }
 }

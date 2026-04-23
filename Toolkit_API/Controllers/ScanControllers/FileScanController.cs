@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using Toolkit_API.Application.Application_Services.Operations;
-using Toolkit_API.DTOs.UserDTOs;
+using Toolkit_API.DTOs.FIleDTOs;
 
 namespace Toolkit_API.Controllers.ScanControllers
 {

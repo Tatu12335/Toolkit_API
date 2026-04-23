@@ -24,13 +24,13 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return users;
             }
         }
-        public async Task<bool> CheckAdminStatus(int userId)
+        public async Task<string> CheckAdminStatus(int userId)
         {
             var sqlQuery = "SELECT roles FROM Users WHERE id = @UserId";
             using (var connection = new SqlConnection(_connectionString))
             {
                 var role = await connection.QueryFirstOrDefaultAsync<string>(sqlQuery, new { UserId = userId });
-                return role != null && role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                return role;
             }
         }
         public async Task<bool> CheckUserExists(int userId)
