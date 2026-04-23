@@ -38,8 +38,14 @@ namespace AvToolKitWPF.Main
                 return;
             }
 
+
+
             var filePath = dialog.FileName;
+            var fileInfo = new FileInfo(filePath);
             MessageBox.Show($"File selected: {filePath}", "File Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
+
 
             try
             {
@@ -73,10 +79,45 @@ namespace AvToolKitWPF.Main
                 MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        public async Task<string> ScanFolder(string folder)
+        {
+
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var json = JsonConvert.SerializeObject(new { filePath = folder });
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+                    var response = await client.PostAsync("https://localhost:7023/FileOps/Scan", content);
+
+
+                    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show($"Scan failed: {responseContent}", "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return null;
+                    }
+
+
+                    ListBoxResults.Items.Add($"Scan successful: {responseContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occured");
+            }
+            return null;
+
+
+        }
         // This Probably isn't the most efficient way to scan a folder, since it sends a separate request for each file,
         // but it works for demonstration purposes. In a real application,
         // I would probably implement a batch scanning endpoint that accepts multiple file paths at once to reduce the number of requests and improve performance.
-        private void ButtonScanFolder_Click(object sender, RoutedEventArgs e)
+        private async void ButtonScanFolder_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog folderDialog = new OpenFolderDialog();
             var result = folderDialog.ShowDialog();
@@ -92,50 +133,8 @@ namespace AvToolKitWPF.Main
                     return;
                 }
 
-                Stack<string> stack = new Stack<string>();
-                stack.Push(folderPath);
-                while (stack.Count > 0)
-                {
-                    var currentPath = stack.Pop();
-                    try
-                    {
-                        var files = Directory.GetFiles(currentPath);
-                        foreach (var file in files)
-                        {
 
-                            using (var client = new HttpClient())
-                            {
-                                var json = JsonConvert.SerializeObject(new { filePath = file });
-
-                                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-
-                                var response = client.PostAsync("https://localhost:7023/FileOps/Scan", content).Result;
-
-                                var responseContent = response.Content.ReadAsStringAsync().Result;
-
-                                if (!response.IsSuccessStatusCode)
-                                {
-                                    ListBoxResults.Items.Add($"Scan failed for {file}: {responseContent}");
-                                }
-                                else
-                                {
-                                    ListBoxResults.Items.Add($"Scan successful for {file}: {responseContent}");
-                                }
-                            }
-                        }
-                        var directories = Directory.GetDirectories(currentPath);
-                        foreach (var dir in directories)
-                        {
-                            stack.Push(dir);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error accessing {currentPath}: {ex.Message}", "Access Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
+                await ScanFolder(folderPath);
 
 
 

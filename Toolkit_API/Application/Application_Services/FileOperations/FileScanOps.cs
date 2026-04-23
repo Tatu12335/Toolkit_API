@@ -12,13 +12,13 @@ namespace Toolkit_API.Application.Application_Services.Operations
         private readonly StaticFileAnalysis _staticFileAnalysis;
         private readonly FileHasher _fileHasher;
         private readonly Toolkit_API.Application.Application_Services.FileOperations.HandleZip _zipHandler;
-
+        private readonly HandleFolder _handleFolder;
         public FileScanOps(IFileScanRepo repository,
             ICallExternalAPI externalAPI,
             HandleResult handleResult,
             StaticFileAnalysis staticFileAnalysis,
             FileHasher fileHasher,
-            Toolkit_API.Application.Application_Services.FileOperations.HandleZip zipHandler)
+            Toolkit_API.Application.Application_Services.FileOperations.HandleZip zipHandler, HandleFolder handleFolder)
         {
             _repository = repository;
             _externalAPI = externalAPI;
@@ -26,12 +26,18 @@ namespace Toolkit_API.Application.Application_Services.Operations
             _fileHasher = fileHasher;
             _staticFileAnalysis = staticFileAnalysis;
             _zipHandler = zipHandler;
+            _handleFolder = handleFolder;
         }
 
         public async Task<string> ScanFile(string filePath, int userId)
         {
+
             if (filePath == null)
                 throw new ArgumentNullException();
+
+            if (Directory.Exists(filePath))
+                filePath = await _handleFolder.Handler(filePath);
+
             if (!File.Exists(filePath))
                 throw new FileNotFoundException();
 
@@ -50,8 +56,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
 
             }
 
-            if (string.Equals(fileInfo.Extension, ".zip", StringComparison.OrdinalIgnoreCase))
-                await _zipHandler.ProcessZip(filePath);
+
 
             var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
             var handled = await _handleResult.HandleAsync(result);

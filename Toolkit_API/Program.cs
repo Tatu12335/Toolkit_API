@@ -6,9 +6,11 @@ using Toolkit_API.Application.Analysis;
 using Toolkit_API.Application.App_Services.User;
 using Toolkit_API.Application.Application_Services.Admin;
 using Toolkit_API.Application.Application_Services.EmailServices;
+using Toolkit_API.Application.Application_Services.FileOperations;
 using Toolkit_API.Application.Application_Services.Operations;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
+using Toolkit_API.Domain.Policies;
 using Toolkit_API.Infrastructure.Repositories;
 using Toolkit_API.Infrastructure.Security;
 using Toolkit_API.Infrastructure.Security.Jwt;
@@ -94,12 +96,23 @@ builder.Services.AddTransient<AdminOperations>(sp =>
     new AdminOperations(sp.GetRequiredService<IAdminRepo>())
 );
 
+builder.Services.AddTransient<IZipHandler, Toolkit_API.Infrastructure.Services.HandleZip>();
+
+builder.Services.AddTransient<ZipPolicies>();
+
+builder.Services.AddTransient<Toolkit_API.Application.Application_Services.FileOperations.HandleZip>(sp =>
+new Toolkit_API.Application.Application_Services.FileOperations.HandleZip(sp.GetRequiredService<IZipHandler>(), sp.GetRequiredService<ZipPolicies>()));
+
+builder.Services.AddTransient<HandleFolder>();
+
 builder.Services.AddTransient<FileScanOps>(sp =>
     new FileScanOps(sp.GetRequiredService<IFileScanRepo>(),
     sp.GetRequiredService<ICallExternalAPI>(),
     sp.GetRequiredService<HandleResult>(),
     sp.GetRequiredService<StaticFileAnalysis>(),
-    sp.GetRequiredService<FileHasher>()
+    sp.GetRequiredService<FileHasher>(),
+    sp.GetRequiredService<Toolkit_API.Application.Application_Services.FileOperations.HandleZip>(),
+    sp.GetRequiredService<HandleFolder>()
 
 
 

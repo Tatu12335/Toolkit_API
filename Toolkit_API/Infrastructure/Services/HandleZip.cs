@@ -1,8 +1,9 @@
 ﻿using System.IO.Compression;
+using Toolkit_API.Application.Interfaces;
 
 namespace Toolkit_API.Infrastructure.Services
 {
-    public class HandleZip
+    public class HandleZip : IZipHandler
     {
 
         public async Task<FileStream> OpenRead(string filePath)
@@ -15,7 +16,7 @@ namespace Toolkit_API.Infrastructure.Services
             using var zipArchive = new ZipArchive(await OpenRead(filePath), ZipArchiveMode.Read);
             return zipArchive;
         }
-        public async Task<string> HandleTempRoot(string filePath)
+        public string HandleTempRoot(string filePath)
         {
             var tempRoot = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(tempRoot);
@@ -30,6 +31,13 @@ namespace Toolkit_API.Infrastructure.Services
                 Directory.CreateDirectory(destinationDir);
 
             return destinationPath;
+        }
+        public async Task<string> ExtractFile(string path, ZipArchiveEntry entry)
+        {
+            using var entryStream = entry.Open();
+            using var destStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+            await destStream.CopyToAsync(entryStream);
+            return path;
         }
     }
 }

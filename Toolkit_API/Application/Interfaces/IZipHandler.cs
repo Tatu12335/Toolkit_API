@@ -8,7 +8,7 @@ namespace Toolkit_API.Application.Interfaces
         public Task<FileStream> OpenRead(string filePath);
         public Task<ZipArchive> OpenEntry(string filePath);
         public string HandleTempRoot(string filePath);
-        public Task<string> ExtractFile(string DestPath, string destinationPath);
-        public string CreateDestinationPath(string tempRoot, ZipArchive entry);
+        public string CreateDestinationPath(string tempRoot, string path);
+        public Task<string> ExtractFile(string path, ZipArchiveEntry entry);
     }
 }
