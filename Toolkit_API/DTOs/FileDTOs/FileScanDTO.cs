@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Toolkit_API.DTOs.UserDTOs
+namespace Toolkit_API.DTOs.FIleDTOs
 {
     public class FileScanDTO
     {

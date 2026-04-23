@@ -7,9 +7,11 @@ namespace AvToolKitWPF.AdminPanel
     /// </summary>
     public partial class AdminPanel : Window
     {
-        public AdminPanel()
+        private readonly string _token;
+        public AdminPanel(string token)
         {
             InitializeComponent();
+            _token = token;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -18,7 +20,7 @@ namespace AvToolKitWPF.AdminPanel
         }
         private void ButtonManageUsers_Click(object sender, RoutedEventArgs e)
         {
-            ManageUsersWindow manageUsersWindow = new ManageUsersWindow();
+            ManageUsersWindow manageUsersWindow = new ManageUsersWindow(_token);
             manageUsersWindow.ShowDialog();
         }
         private void ButtonSettings_Click(object sender, RoutedEventArgs e)

@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
+﻿using Toolkit_API.Application.Application_Services.FileOperations;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
 using Toolkit_API.Infrastructure.Services;
-
 namespace Toolkit_API.Application.Application_Services.Operations
 {
     public class FileScanOps
@@ -12,27 +11,37 @@ namespace Toolkit_API.Application.Application_Services.Operations
         private readonly HandleResult _handleResult;
         private readonly StaticFileAnalysis _staticFileAnalysis;
         private readonly FileHasher _fileHasher;
-        
+        private readonly Toolkit_API.Application.Application_Services.FileOperations.HandleZip _zipHandler;
+        private readonly HandleFolder _handleFolder;
         public FileScanOps(IFileScanRepo repository,
             ICallExternalAPI externalAPI,
             HandleResult handleResult,
             StaticFileAnalysis staticFileAnalysis,
-            FileHasher fileHasher)
+            FileHasher fileHasher,
+            Toolkit_API.Application.Application_Services.FileOperations.HandleZip zipHandler, HandleFolder handleFolder)
         {
             _repository = repository;
             _externalAPI = externalAPI;
             _handleResult = handleResult;
             _fileHasher = fileHasher;
             _staticFileAnalysis = staticFileAnalysis;
-
+            _zipHandler = zipHandler;
+            _handleFolder = handleFolder;
         }
 
         public async Task<string> ScanFile(string filePath, int userId)
         {
+
             if (filePath == null)
                 throw new ArgumentNullException();
+
+            if (Directory.Exists(filePath))
+                filePath = await _handleFolder.Handler(filePath);
+
             if (!File.Exists(filePath))
                 throw new FileNotFoundException();
+
+            var fileInfo = new FileInfo(filePath);
 
 
             var hash = await _fileHasher.HashFileAsync(filePath);
@@ -46,6 +55,8 @@ namespace Toolkit_API.Application.Application_Services.Operations
                     return $"File has already been scanned. FileName: {file.FileName}, Score: {file.Score}";
 
             }
+
+
 
             var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
             var handled = await _handleResult.HandleAsync(result);
@@ -67,7 +78,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             return analysisResult;
 
         }
-        
+
     }
 
 }

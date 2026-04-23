@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using System.Diagnostics;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.Users;
 
@@ -21,17 +20,17 @@ namespace Toolkit_API.Infrastructure.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 var users = await connection.QueryAsync<ForAdminEntity>(sqlQuery);
-               
+
                 return users;
             }
         }
-        public async Task<bool> CheckAdminStatus(int userId)
+        public async Task<string> CheckAdminStatus(int userId)
         {
             var sqlQuery = "SELECT roles FROM Users WHERE id = @UserId";
             using (var connection = new SqlConnection(_connectionString))
             {
                 var role = await connection.QueryFirstOrDefaultAsync<string>(sqlQuery, new { UserId = userId });
-                return role != null && role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                return role;
             }
         }
         public async Task<bool> CheckUserExists(int userId)
@@ -106,12 +105,12 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return affectedRows;
             }
         }
-        public async Task<string> SearchUserByName(string username)
+        public async Task<ForAdminEntity> SearchUserByName(string username)
         {
             var sqlQuery = "SELECT id,username,newemail FROM Users WHERE username LIKE @Username";
             using (var connection = new SqlConnection(_connectionString))
             {
-                var user = await connection.QueryFirstOrDefaultAsync<string>(sqlQuery, new { Username = username });
+                var user = await connection.QueryFirstOrDefaultAsync<ForAdminEntity>(sqlQuery, new { Username = username });
                 return user;
             }
         }
@@ -133,5 +132,5 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return exists;
             }
         }
-    } 
+    }
 }

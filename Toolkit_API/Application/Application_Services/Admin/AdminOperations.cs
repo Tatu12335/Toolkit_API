@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Toolkit_API.Application.Interfaces;
+using Toolkit_API.Domain.Entities.Users;
 namespace Toolkit_API.Application.Application_Services.Admin
 {
     public class AdminOperations
@@ -22,15 +23,15 @@ namespace Toolkit_API.Application.Application_Services.Admin
             }
             return result;
         }
-        public async Task<bool> CheckAdminStatus(int userId)
+        public async Task<string> CheckAdminStatus(int userId)
         {
             return await _adminRepo.CheckAdminStatus(userId);
         }
-        public async Task<string> SearchByUsername(string username)
+        public async Task<ForAdminEntity> SearchByUsername(string username)
         {
             var result = await _adminRepo.SearchUserByName(username);
 
-            if (string.IsNullOrEmpty(result))
+            if (result == null)
                 throw new Exception("User not found.");
 
             return result;
