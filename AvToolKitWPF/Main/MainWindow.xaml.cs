@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Windows;
 
@@ -55,10 +56,11 @@ namespace AvToolKitWPF.Main
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-                    var response = await client.PostAsync("https://localhost:7023/FileOps/Scan", content);
+                    var response = await client.PostAsync("https://localhost:7023/api/FileScan/Scan/File", content);
 
 
                     var responseContent = await response.Content.ReadAsStringAsync();
+                    
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -91,7 +93,7 @@ namespace AvToolKitWPF.Main
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-                    var response = await client.PostAsync("https://localhost:7023/FileOps/Scan", content);
+                    var response = await client.PostAsync("https://localhost:7023/FileOps/Scan/Folder", content);
 
 
                     var responseContent = await response.Content.ReadAsStringAsync();
@@ -99,7 +101,7 @@ namespace AvToolKitWPF.Main
                     if (!response.IsSuccessStatusCode)
                     {
                         MessageBox.Show($"Scan failed: {responseContent}", "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return null;
+                        return "";
                     }
 
 
@@ -108,15 +110,13 @@ namespace AvToolKitWPF.Main
             }
             catch (Exception ex)
             {
-                throw new Exception("An unexpected error occured");
+                throw new Exception("An unexpected error occured" + ex.StackTrace + ex.InnerException);
             }
-            return null;
+            return "";
 
 
         }
-        // This Probably isn't the most efficient way to scan a folder, since it sends a separate request for each file,
-        // but it works for demonstration purposes. In a real application,
-        // I would probably implement a batch scanning endpoint that accepts multiple file paths at once to reduce the number of requests and improve performance.
+        
         private async void ButtonScanFolder_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog folderDialog = new OpenFolderDialog();
@@ -133,7 +133,7 @@ namespace AvToolKitWPF.Main
                     return;
                 }
 
-
+                
                 await ScanFolder(folderPath);
 
 

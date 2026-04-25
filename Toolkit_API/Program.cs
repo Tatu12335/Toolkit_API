@@ -17,11 +17,11 @@ using Toolkit_API.Infrastructure.Security.Jwt;
 using Toolkit_API.Infrastructure.Services;
 using Toolkit_API.Middleware;
 
-// implement zip file scanning.
-// Time spent on the project : 30hrs 30min
+// Time spent on the project : 37hrs 0min
 var builder = WebApplication.CreateBuilder(args);
 var connetionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 ?? throw new InvalidOperationException("'DB_CONNECTION' not found");
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 
 // Add services to the container.
 builder.Services.AddRateLimiter(options =>
@@ -60,6 +60,77 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddControllers();
+builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<Login>();
+builder.Services.AddTransient<CreateUser>();
+builder.Services.AddTransient<FileHasher>();
+builder.Services.AddHttpClient<ICallExternalAPI, ExternalCalls>();
+builder.Services.AddTransient<HandleResult>();
+builder.Services.AddTransient<IFileAnalysis, FileAnalysis>();
+builder.Services.AddTransient<ExtractedStrings>();
+builder.Services.AddTransient<IEmailServices, EmailServices>();
+builder.Services.AddTransient<ZipPolicies>();
+builder.Services.AddTransient<IZipHandler, HandleZip>();
+builder.Services.AddTransient<HandleFolder>();
+builder.Services.AddTransient<HandleZip>();
+builder.Services.AddTransient<HandleResult>();
+builder.Services.AddTransient<StaticFileAnalysis>();
+builder.Services.AddTransient<FileAnalysisResult>();
+
+builder.Services.AddTransient<ScoringAlg>(
+    options => new ScoringAlg(options.GetRequiredService<IFileAnalysis>(),
+    options.GetRequiredService<HandleResult>(),
+    0.0,
+    options.GetRequiredService<ExtractedStrings>()
+
+));
+
+builder.Services.AddTransient<IUserRepo, SqlUserRepo>(options =>
+    new SqlUserRepo(options.GetRequiredService<IPasswordHasher>(), connetionString)
+);
+
+builder.Services.AddTransient<IAdminRepo, AdminRepository>(options =>
+    new AdminRepository(connetionString)
+);
+
+builder.Services.AddTransient<HandleZIP>(options =>
+    new HandleZIP(
+    options.GetRequiredService<HandleZip>(),
+    options.GetRequiredService<ZipPolicies>())
+);
+
+builder.Services.AddTransient<IGenerateToken, TokenGenerator>(options =>
+    new TokenGenerator(jwtKey)
+);
+
+builder.Services.AddTransient<NewLetter>(options =>
+    new NewLetter(options.GetRequiredService<IEmailServices>())
+);
+
+builder.Services.AddTransient<StaticFileAnalysis>(options =>
+    new StaticFileAnalysis(options.GetRequiredService<IFileAnalysis>(),
+        options.GetRequiredService<ScoringAlg>(),
+        options.GetRequiredService<ExtractedStrings>()
+
+    )
+);
+
+builder.Services.AddTransient<IFileScanRepo, FileScanRepo>(options =>
+    new FileScanRepo(options.GetRequiredService<FileHasher>(),
+    connetionString
+    )
+);
+
+builder.Services.AddTransient<FileScanOps>(options =>
+    new FileScanOps(options.GetRequiredService<IFileScanRepo>(),
+    options.GetRequiredService<ICallExternalAPI>(),
+    options.GetRequiredService<HandleResult>(),
+    options.GetRequiredService<StaticFileAnalysis>(),
+    options.GetRequiredService<FileHasher>(),
+    options.GetRequiredService<HandleZIP>()
+    )
+
+);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -78,7 +149,7 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader();
     });
 });
-builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
+/*builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
     new SqlUserRepo(sp.GetRequiredService<IPasswordHasher>(), connetionString)
 );
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -105,18 +176,8 @@ new Toolkit_API.Application.Application_Services.FileOperations.HandleZip(sp.Get
 
 builder.Services.AddTransient<HandleFolder>();
 
-builder.Services.AddTransient<FileScanOps>(sp =>
-    new FileScanOps(sp.GetRequiredService<IFileScanRepo>(),
-    sp.GetRequiredService<ICallExternalAPI>(),
-    sp.GetRequiredService<HandleResult>(),
-    sp.GetRequiredService<StaticFileAnalysis>(),
-    sp.GetRequiredService<FileHasher>(),
-    sp.GetRequiredService<Toolkit_API.Application.Application_Services.FileOperations.HandleZip>(),
-    sp.GetRequiredService<HandleFolder>()
-
-
-
-    )
+builder.Services.AddTransient<FileScanOps>(sp => 
+    sp.GetRequiredService<FileScanOps>()
 );
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 
@@ -142,9 +203,11 @@ builder.Services.AddTransient<IEmailServices, EmailServices>();
 builder.Services.AddTransient<NewLetter>(sp => new NewLetter(sp.GetRequiredService<IEmailServices>()));
 builder.Services.AddTransient<IAdminRepo, AdminRepository>(sp =>
     new AdminRepository(connetionString)
-);
+);*/
+
 
 var app = builder.Build();
+
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
