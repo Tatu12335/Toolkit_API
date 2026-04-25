@@ -27,8 +27,4 @@
     <Page Include="App.xaml" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Toolkit_API\Toolkit_API.csproj" />
-  </ItemGroup>
-
 </Project>

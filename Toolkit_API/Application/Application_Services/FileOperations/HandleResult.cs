@@ -16,7 +16,7 @@ namespace Toolkit_API.Application.Application_Services.Operations
             }
             else
             {
-                return $" FILE : [placeholder]. SCORE : [placeholder].";
+                return null;
             }
         }
     }

@@ -3,11 +3,11 @@ using Toolkit_API.Domain.Policies;
 
 namespace Toolkit_API.Application.Application_Services.FileOperations
 {
-    public class HandleZip
+    public class HandleZIP
     {
         private readonly IZipHandler _zipHandler;
         private readonly ZipPolicies _zipPolicies;
-        public HandleZip(IZipHandler zipHandler, ZipPolicies zipPolicies)
+        public HandleZIP(IZipHandler zipHandler, ZipPolicies zipPolicies)
         {
             _zipHandler = zipHandler;
             _zipPolicies = zipPolicies;

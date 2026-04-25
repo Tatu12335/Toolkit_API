@@ -14,7 +14,7 @@
             <Button Content="Scan file" Width="130" Margin="100,100,480,100" Click="ButtonScan_Click"/>
             
             <ListBox x:Name="ListBoxResults" Margin="100,0,480,100"/>
-            <Button Content="Scan Folder" Width="130" Margin="100,100,480,100" Click="ButtonScanFolder_Click"/>
+            <Button Content="Scan Folder" Width="130" Margin="100,10,480,100" Click="ButtonScanFolder_Click" RenderTransformOrigin="0.499,0.548" Height="28"/>
 
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10">

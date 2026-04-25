@@ -1,15 +1,22 @@
-﻿namespace Toolkit_API.Application.Application_Services.FileOperations
+﻿using System.Diagnostics;
+using Toolkit_API.Application.Application_Services.Operations;
+using Toolkit_API.Application.Interfaces;
+
+namespace Toolkit_API.Application.Application_Services.FileOperations
 {
     public class HandleFolder
     {
+        private readonly FileScanOps _scanOps;
+        public HandleFolder(FileScanOps scanOps) 
+        { 
+            _scanOps = scanOps;
+        }
 
-        public HandleFolder() { }
-
-        public async Task<string> Handler(string path)
+        public async Task<string> Handler(string path,int userId)
         {
             if (!Directory.Exists(path))
                 return path;
-
+            Debug.WriteLine("HELLO!" +  path);
             Stack<string> directories = new Stack<string>();
             directories.Push(path);
 
@@ -17,15 +24,16 @@
             {
                 var current = directories.Pop();
 
-                foreach (var file in Directory.EnumerateFiles(path))
+                foreach (var file in Directory.EnumerateFiles(path,"*"))
                 {
                     var fileInfo = new FileInfo(file);
 
                     if (fileInfo.Exists)
-                        return fileInfo.FullName;
+                        path = fileInfo.FullName;
 
                     directories.Push(fileInfo.FullName);
-                    return current;
+                    Debug.WriteLine(fileInfo.FullName);
+                    await _scanOps.ScanFile(file,userId);
 
 
                 }
@@ -33,7 +41,7 @@
                 foreach (var subdirectory in subdirectories)
                 {
                     directories.Push(subdirectory);
-                    return subdirectory;
+                    
                 }
 
             }
