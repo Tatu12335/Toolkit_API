@@ -4,12 +4,12 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Toolkit_API.Application.Analysis;
 using Toolkit_API.Application.App_Services.User;
-using Toolkit_API.Application.Application_Services.Admin;
 using Toolkit_API.Application.Application_Services.EmailServices;
 using Toolkit_API.Application.Application_Services.FileOperations;
 using Toolkit_API.Application.Application_Services.Operations;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
+using Toolkit_API.Domain.Entities.Files;
 using Toolkit_API.Domain.Policies;
 using Toolkit_API.Infrastructure.Repositories;
 using Toolkit_API.Infrastructure.Security;
@@ -59,6 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
         };
     });
+
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<Login>();
@@ -76,6 +77,7 @@ builder.Services.AddTransient<HandleZip>();
 builder.Services.AddTransient<HandleResult>();
 builder.Services.AddTransient<StaticFileAnalysis>();
 builder.Services.AddTransient<FileAnalysisResult>();
+builder.Services.AddTransient<FolderInfo>();
 
 builder.Services.AddTransient<ScoringAlg>(
     options => new ScoringAlg(options.GetRequiredService<IFileAnalysis>(),
@@ -91,6 +93,10 @@ builder.Services.AddTransient<IUserRepo, SqlUserRepo>(options =>
 
 builder.Services.AddTransient<IAdminRepo, AdminRepository>(options =>
     new AdminRepository(connetionString)
+);
+
+builder.Services.AddTransient<HandleFolder>(options =>
+    new HandleFolder(options.GetRequiredService<FileScanOps>(), new FolderInfo())
 );
 
 builder.Services.AddTransient<HandleZIP>(options =>
@@ -149,61 +155,6 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader();
     });
 });
-/*builder.Services.AddTransient<IUserRepo, SqlUserRepo>(sp =>
-    new SqlUserRepo(sp.GetRequiredService<IPasswordHasher>(), connetionString)
-);
-builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-builder.Services.AddTransient<Login>();
-builder.Services.AddTransient<CreateUser>();
-builder.Services.AddTransient<FileHasher>();
-builder.Services.AddTransient<IFileScanRepo, FileScanRepo>(sp =>
-    new FileScanRepo(sp.GetRequiredService<FileHasher>(), connetionString)
-);
-builder.Services.AddTransient<IAdminRepo, AdminRepository>(sp =>
-    new AdminRepository(connetionString)
-);
-
-builder.Services.AddTransient<AdminOperations>(sp =>
-    new AdminOperations(sp.GetRequiredService<IAdminRepo>())
-);
-
-builder.Services.AddTransient<IZipHandler, Toolkit_API.Infrastructure.Services.HandleZip>();
-
-builder.Services.AddTransient<ZipPolicies>();
-
-builder.Services.AddTransient<Toolkit_API.Application.Application_Services.FileOperations.HandleZip>(sp =>
-new Toolkit_API.Application.Application_Services.FileOperations.HandleZip(sp.GetRequiredService<IZipHandler>(), sp.GetRequiredService<ZipPolicies>()));
-
-builder.Services.AddTransient<HandleFolder>();
-
-builder.Services.AddTransient<FileScanOps>(sp => 
-    sp.GetRequiredService<FileScanOps>()
-);
-var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET");
-
-builder.Services.AddTransient<IGenerateToken, TokenGenerator>(sp =>
-
-    new TokenGenerator(jwtKey)
-);
-builder.Services.AddHttpClient<ICallExternalAPI, ExternalCalls>();
-builder.Services.AddTransient<HandleResult>();
-
-builder.Services.AddTransient<IFileAnalysis, FileAnalysis>();
-builder.Services.AddTransient<ExtractedStrings>();
-builder.Services.AddTransient<ScoringAlg>(sp => new ScoringAlg(sp.GetRequiredService<IFileAnalysis>(),
-    sp.GetRequiredService<HandleResult>(),
-    0,
-    sp.GetRequiredService<ExtractedStrings>()));
-
-builder.Services.AddTransient<StaticFileAnalysis>(sp => new StaticFileAnalysis(sp.GetRequiredService<IFileAnalysis>(),
-    sp.GetRequiredService<ScoringAlg>(),
-    sp.GetRequiredService<ExtractedStrings>()));
-
-builder.Services.AddTransient<IEmailServices, EmailServices>();
-builder.Services.AddTransient<NewLetter>(sp => new NewLetter(sp.GetRequiredService<IEmailServices>()));
-builder.Services.AddTransient<IAdminRepo, AdminRepository>(sp =>
-    new AdminRepository(connetionString)
-);*/
 
 
 var app = builder.Build();

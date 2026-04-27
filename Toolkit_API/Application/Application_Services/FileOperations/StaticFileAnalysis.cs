@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Toolkit_API.Application.Analysis;
+﻿using Toolkit_API.Application.Analysis;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
 
@@ -30,8 +29,6 @@ namespace Toolkit_API.Application.Application_Services.Operations
 
             var score = await _scoringAlg.CalculateScore(filePath, metadataBool, extensionMatch);
 
-            Debug.WriteLine($"File Analysis Result: {analysisResult}");
-            Debug.WriteLine($"File Analysis Score: {(double)score}");
             return new FileAnalysisResult
             {
                 FilePath = filePath,

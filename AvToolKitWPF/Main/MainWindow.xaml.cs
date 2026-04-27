@@ -3,9 +3,9 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
 using System.Windows;
+using Toolkit_API.Domain.Entities.Files;
 
 namespace AvToolKitWPF.Main
 {
@@ -60,7 +60,7 @@ namespace AvToolKitWPF.Main
 
 
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    
+
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -93,30 +93,36 @@ namespace AvToolKitWPF.Main
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-                    var response = await client.PostAsync("https://localhost:7023/FileOps/Scan/Folder", content);
+                    var response = await client.PostAsync("https://localhost:7023/api/FileScan/Scan/Folder", content);
 
 
                     var responseContent = await response.Content.ReadAsStringAsync();
-
-                    if (!response.IsSuccessStatusCode)
+                    var resultList = JsonConvert.DeserializeObject<FolderInfo>(responseContent);
+                    foreach (var item in resultList.Files)
                     {
-                        MessageBox.Show($"Scan failed: {responseContent}", "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return "";
+                        ListBoxResults.Items.Add(item);
                     }
 
 
-                    ListBoxResults.Items.Add($"Scan successful: {responseContent}");
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show($"Scan failed: {response}", "Scan Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return "";
+                    }
+
+                    
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("An unexpected error occured" + ex.StackTrace + ex.InnerException);
+                throw new Exception("An unexpected error occured " + ex.Message + ex.StackTrace + ex.InnerException);
             }
             return "";
 
 
         }
-        
+
         private async void ButtonScanFolder_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog folderDialog = new OpenFolderDialog();
@@ -133,7 +139,7 @@ namespace AvToolKitWPF.Main
                     return;
                 }
 
-                
+
                 await ScanFolder(folderPath);
 
 

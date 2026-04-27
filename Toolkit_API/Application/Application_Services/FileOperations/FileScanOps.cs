@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using Toolkit_API.Application.Application_Services.FileOperations;
+﻿using Toolkit_API.Application.Application_Services.FileOperations;
 using Toolkit_API.Application.Interfaces;
 using Toolkit_API.Domain.Entities.FileAnalysis;
+using Toolkit_API.Domain.Entities.Files;
 using Toolkit_API.Infrastructure.Services;
 namespace Toolkit_API.Application.Application_Services.Operations
 {
@@ -13,13 +13,14 @@ namespace Toolkit_API.Application.Application_Services.Operations
         private readonly StaticFileAnalysis _staticFileAnalysis;
         private readonly FileHasher _fileHasher;
         private readonly Toolkit_API.Application.Application_Services.FileOperations.HandleZIP _zipHandler;
-        
+        private readonly HandleFolder _handleFolder;
         public FileScanOps(IFileScanRepo repository,
             ICallExternalAPI externalAPI,
             HandleResult handleResult,
             StaticFileAnalysis staticFileAnalysis,
             FileHasher fileHasher,
             HandleZIP zipHandler
+
             )
         {
             _repository = repository;
@@ -28,34 +29,32 @@ namespace Toolkit_API.Application.Application_Services.Operations
             _fileHasher = fileHasher;
             _staticFileAnalysis = staticFileAnalysis;
             _zipHandler = zipHandler;
-            
+
+
         }
 
         public async Task<string> ScanFile(string filePath, int userId)
         {
-            Debug.WriteLine(filePath);
+
             if (filePath == null)
                 throw new ArgumentNullException();
+          
             
-            if (!File.Exists(filePath))
-                throw new FileNotFoundException();
-
 
             var hash = await _fileHasher.HashFileAsync(filePath);
             var hashExists = await _repository.DoubleHash(hash);
-            Debug.WriteLine(hash);
+
             if (hashExists != null)
             {
-                var file = await _repository.GetFile(hash, userId);
+                var existingFile = await _repository.GetFile(hash, userId);
 
-                if (file != null)
-                    return $"File has already been scanned. FileName: {file.FileName}, Score: {file.Score}";
+                if (existingFile != null)
+                    return $"File : {existingFile.FileName} already scanned. Score :{existingFile.Score}";
 
             }
 
             var result = await _externalAPI.CallAPI(hash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
             var handled = await _handleResult.HandleAsync(result);
-                      
 
             var staticAnalysisResult = await StaticScan(filePath, userId);
 
@@ -63,7 +62,8 @@ namespace Toolkit_API.Application.Application_Services.Operations
                 staticAnalysisResult.Score += 50.0;
 
             await _repository.InsertAll(filePath, userId, staticAnalysisResult.Score);
-            return $"Static Analysis Result: {staticAnalysisResult.AnalysisResult}, Score: {staticAnalysisResult.Score}";
+            return $"filepath : [{staticAnalysisResult.FilePath}], Verdict & Score : [{staticAnalysisResult.verdict}]";
+
 
         }
         public async Task<FileAnalysisResult> StaticScan(string filePath, int userId)
