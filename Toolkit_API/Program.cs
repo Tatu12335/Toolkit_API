@@ -135,7 +135,8 @@ builder.Services.AddTransient<StaticScan>(options =>
         options.GetRequiredService<IResultRepository>(),
         options.GetRequiredService<IDetectionSourceBuilder>(),
         options.GetRequiredService<ConfidenceANDSeverityCalculator>(),
-        options.GetRequiredService<ScoringAlgorithmn>()
+        options.GetRequiredService<ScoringAlgorithmn>(),
+        options.GetRequiredService<Insert>()
     )
 );
 builder.Services.AddHangfire(options =>
