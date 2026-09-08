@@ -13,5 +13,7 @@ namespace Toolkit_API.Application.Interfaces
         public Task<IEnumerable<int>> GetFileId(byte[] FileHash, int userId);
         public Task InsertCapabalities(byte[] FileHash, int userId, IEnumerable<Capability> capabilities);
         public Task<IEnumerable<Capability>> GetCapability(byte[] FileHash, int userId);
+        public Task InsertScanLogObject(FileScanLog fileScanLog);
+        public Task InsertScanResult(string fileName, byte[] FileHash, int userId, double score, IEnumerable<Capability> capabilities, double confidence, double severity);
     }
 }
