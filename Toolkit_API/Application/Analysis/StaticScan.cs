@@ -24,6 +24,7 @@ namespace Toolkit_API.Application.Analysis
         private readonly IDetectionSourceBuilder _detectionSourceBuilder;
         private readonly ConfidenceANDSeverityCalculator _confidenceANDSeverityCalculator;
         private readonly ScoringAlgorithmn _scoringAlgorithmn;
+        private readonly Insert _insert;
         public StaticScan(IFileScanRepo fileScanRepository,
             HashOps hashOps,
             ICallExternalAPI callExternalAPI,
@@ -34,12 +35,14 @@ namespace Toolkit_API.Application.Analysis
             IResultRepository resultRepository,
             IDetectionSourceBuilder detectionSourceBuilder,
             ConfidenceANDSeverityCalculator confidenceANDSeverityCalculator,
-            ScoringAlgorithmn scoringAlgorithmn)    
+            ScoringAlgorithmn scoringAlgorithmn,
+            Insert insert)    
         {
             _fileScanRepository = fileScanRepository;
             _hashOps = hashOps;
             _callExternalAPI = callExternalAPI;
             _capabilityAnalyzer = capabilityAnalyzer;
+            _insert = insert;
             _Risk_Level = risk_Level;
             _extractedStrings = extractedStrings;
             _fileAnalysis = fileAnalysis;
@@ -60,24 +63,36 @@ namespace Toolkit_API.Application.Analysis
             Debug.WriteLine($"Full path of the file: {filepath}");
 
 
-            var File = await _hashOps.ComputeFileHashAsync(filepath, userId);
-            Debug.WriteLine($"File hash: {BitConverter.ToString(File.FileHash).Replace("-", "").ToLower()}");
+            var file = await _hashOps.ComputeFileHashAsync(filepath, userId);
+            //Debug.WriteLine($"File hash: {BitConverter.ToString(File.FileHash).Replace("-", "").ToLower()}");
             
 
 
-            var MalwareBazaarResult = await _callExternalAPI.CallAPI(File.FileHash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
+            //var MalwareBazaarResult = await _callExternalAPI.CallAPI(File.FileHash, Environment.GetEnvironmentVariable("Malware_Bazaar_key"));
             var Patterns = await _fileAnalysis.ComboDetection(filepath, _extractedStrings);
             var DetectionSource = await _detectionSourceBuilder.CreateContext(filepath, _extractedStrings);
+            
+            if(!DetectionSource.Any())
+                return new ScanResult
+                { 
+                    score = 0,
+                    fileHash = file.FileHash,
+                    fileName = file.FileName,
+                    Sources = DetectionSource,
+                    severity = 0,
+                    confidence = 0
+                };
+
+
             Debug.WriteLine($"Patterns found: {Patterns?.Count() ?? 0}");
 
-            
+            // you might be thinking, was this really necessary? yes, it was.
+            // I want to make sure that the patterns are not null and that they contain at least one element before proceeding with the loop.
+            // This is a defensive programming practice to avoid potential null reference exceptions or unnecessary iterations over an empty collection.
             if (Patterns != null && Patterns.Any())
             {
                 foreach (var pattern in Patterns)
                 {
-
-                    
-
                     
                     if (pattern != null)
                     {
@@ -95,34 +110,15 @@ namespace Toolkit_API.Application.Analysis
 
 
 
-            Debug.WriteLine($"Inserted capabilities for file hash: {BitConverter.ToString(File.FileHash).Replace("-", "").ToLower()}");
-            if (MalwareBazaarResult != null)
-            {
-
-
-
-                new ScanResult
-                {
-                    capabilities = capabilities,
-                    score = score,
-                    fileHash = File.FileHash,
-                    fileName = File.FileName,
-                    isMalwareBazaarMatch = 1,
-                    detectionSource = DetectionSource,
-                    severity = severity,
-                    confidence = confidence
-
-                };
-            }
+            await _insert.InsertFile(Path.GetFileName(filepath), file.FileHash, userId, score, capabilities, confidence, severity);
+            
             return new ScanResult
             {
-                capabilities = capabilities,
                 score = score,
                 confidence = confidence,
-                isMalwareBazaarMatch = 0, 
-                fileHash = File.FileHash,
-                fileName = File.FileName,
-                detectionSource = DetectionSource,
+                fileHash = file.FileHash,
+                fileName = file.FileName,
+                Sources = DetectionSource,
                 severity = severity,
              
             };

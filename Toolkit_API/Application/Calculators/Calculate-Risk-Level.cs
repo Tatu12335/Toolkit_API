@@ -11,14 +11,14 @@ namespace Toolkit_API.Application.Calculators
 
         }
 
-        public async Task<RiskLevel> Calculate(ScanResult scanResult)
+        public async Task<RiskLevel> Calculate(IEnumerable<Capability> capabilities/*ScanResult scanResult*/)
         {
 
 
-            if (scanResult.capabilities == null)
+            if (capabilities == null)
                 throw new ArgumentNullException("Scanresult cant be null!");
 
-            return scanResult.capabilities switch
+            return capabilities switch
             {
                 var c when c.Contains(Capability.ReverseShell)
                 || c.Contains(Capability.ProcessInjection)

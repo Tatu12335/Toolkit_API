@@ -35,7 +35,7 @@ namespace Toolkit_API.Infrastructure.Services
 
             return fileType;
         }
-        public async Task<DetectionResult> ExtensionMatches(string filepath)
+        public async Task ExtensionMatches(string filepath)
         {
             if (!File.Exists(filepath))
                 throw new FileNotFoundException($"File not found: {filepath}");
@@ -46,15 +46,8 @@ namespace Toolkit_API.Infrastructure.Services
 
             if (!detectedType.Contains(extension.TrimStart('.'), StringComparison.OrdinalIgnoreCase))
             {
-                return new DetectionResult
-                {
-                    RuleName = "Extension Mismatch",
-                    Score = +10.0,
-                    Confidence = 0.9
 
-                };
             }
-            return new DetectionResult { };
 
         }
         // This method should only be called from the "ComboDetection" Method

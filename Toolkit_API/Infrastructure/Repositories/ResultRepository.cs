@@ -17,15 +17,15 @@ namespace Toolkit_API.Infrastructure.Repositories
         {
             _connectionString = connectionString;
         }
-        public async Task <List<string>> GetCapabilities(string jobId)
+        public async Task <ScanResult> GetCapabilities(string jobId)
         {
             string query = "SELECT JsonData FROM ScanResult WHERE jobId = @JobId";
 
             using (var conn = new SqlConnection(_connectionString))
             {
                 var sqlResult = await conn.QuerySingleAsync<ScanResult>(query, new { JobId = jobId });
-                var final = sqlResult.capabilities.Select(x => x.ToString()).ToList();
-                return final;
+                //var final = sqlResult.capabilities.Select(x => x.ToString()).ToList();
+                return sqlResult;
             }
         }
         public async Task <ScanResult> GetResultAsync(string jobId)

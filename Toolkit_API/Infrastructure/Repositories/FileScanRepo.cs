@@ -104,6 +104,29 @@ namespace Toolkit_API.Infrastructure.Repositories
                 return capability;
             }
         }
-
+        public async Task InsertScanResult(string fileName,byte[] FileHash, int userId, double score, IEnumerable<Capability> capabilities, double confidence, double severity)
+        {
+            using (var conn = new SqlConnection(_connetionString))
+            {
+                await conn.ExecuteAsync("Insert Into ScanLog (FileName,FileHash, userId, score, capabilities, confidence, severity) values (@FileName, @FileHash, @UserId, @Score, @Capabilities, @Confidence, @Severity)",
+                    new { FileName = fileName, FileHash = FileHash, UserId = userId, Score = score, Capabilities = capabilities, Confidence = confidence, Severity = severity });
+            }
+        }
+        public async Task InsertScanLogObject(FileScanLog fileScanLog)
+        {
+            using (var conn = new SqlConnection(_connetionString))
+            {
+                await conn.ExecuteAsync("Insert Into ScanLog (FileName, FileHash, userId, Score, capabilities, confidence, severity) values (@FileName, @FileHash, @UserId, @Score, @Capabilities, @Confidence, @Severity)", new
+                {
+                    FileName = fileScanLog.FileName,    
+                    FileHash = fileScanLog.FileHash,
+                    UserId = fileScanLog.userId,
+                    Score = fileScanLog.Score,
+                    Capabilities = fileScanLog.Capability,
+                    Confidence = fileScanLog.confidence,
+                    Severity = fileScanLog.severity
+                });
+            }
+        }
     }
 }
