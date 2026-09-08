@@ -1,8 +1,12 @@
-﻿using Toolkit_API.Domain.Policies;
+﻿
+using System.Text.Json.Serialization;
+
+using Toolkit_API.Domain.Policies;
 
 namespace Toolkit_API.Domain.Entities.FileAnalysis
 {
-    [Flags] 
+    [Flags]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Source 
     {
         none = 0,

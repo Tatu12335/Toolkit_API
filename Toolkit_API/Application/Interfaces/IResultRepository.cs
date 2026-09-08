@@ -6,6 +6,6 @@ namespace Toolkit_API.Application.Interfaces
     {
         public Task<ScanResult> GetResultAsync(string jobId);
         public Task SaveResultAsync(string jobId, ScanResult result);
-        public Task<List<string>> GetCapabilities(string jobId);
+        public Task<ScanResult> GetCapabilities(string jobId);
     }
 }

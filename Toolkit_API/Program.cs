@@ -1,6 +1,7 @@
 using Dapper;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text;
@@ -81,7 +82,6 @@ builder.Services.AddTransient<HandleResult>();
 builder.Services.AddTransient<FolderInfo>();
 builder.Services.AddTransient<IHandleUploadFolder, HandleUploadFolder>();
 builder.Services.AddTransient<IhangfireService, HangfireService>();
-builder.Services.AddTransient<DetectionResult>();
 builder.Services.AddTransient<ICapabilityAnalyzer, CapabilityAnalyzer>();
 builder.Services.AddTransient<Insert>();
 builder.Services.AddTransient<Calculate_Risk_Level>();
@@ -135,7 +135,8 @@ builder.Services.AddTransient<StaticScan>(options =>
         options.GetRequiredService<IResultRepository>(),
         options.GetRequiredService<IDetectionSourceBuilder>(),
         options.GetRequiredService<ConfidenceANDSeverityCalculator>(),
-        options.GetRequiredService<ScoringAlgorithmn>()
+        options.GetRequiredService<ScoringAlgorithmn>(),
+        options.GetRequiredService<Insert>()
     )
 );
 builder.Services.AddHangfire(options =>
@@ -206,6 +207,8 @@ builder.Services.AddCors(options =>
 builder.Services.Configure<KestrelServerOptions>(options =>
     options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10)
 );
+
+
 
 var app = builder.Build();
 

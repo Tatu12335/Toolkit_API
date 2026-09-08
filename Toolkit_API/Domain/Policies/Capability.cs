@@ -1,5 +1,8 @@
-﻿namespace Toolkit_API.Domain.Policies
+﻿using System.Text.Json.Serialization;
+
+namespace Toolkit_API.Domain.Policies
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Capability
     {
         None,
